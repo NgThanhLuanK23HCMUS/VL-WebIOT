@@ -19,15 +19,12 @@
     <h2>Sign in/up Form</h2>
     <div class="container" id="container">
       <div class="form-container sign-up-container">
-        <form action="/manual_signup" method="POST">
+        <form action="/signup_manual" method="POST">
           <h1>Create Account</h1>
           <div class="social-container">
-            <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-
-            <a href="/login/google" class="social"
-              ><i class="fab fa-google-plus-g"></i
-            ></a>
-            <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+            <a href="/start_google_auth?state=signup" class="social">
+              <i class="fab fa-google-plus-g"></i>
+            </a>
           </div>
           <span>or use your email for registration</span>
           <input type="text" name="name" placeholder="Name" required />
@@ -42,18 +39,16 @@
         </form>
       </div>
       <div class="form-container sign-in-container">
-        <form action="signin" method="POST">
+        <form action="signin_manual" method="POST">
           <h1>Sign in</h1>
           <div class="social-container">
-            <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-            <a href="/login/google" class="social"
-              ><i class="fab fa-google-plus-g"></i
-            ></a>
-            <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+            <a href="/start_google_auth?state=signin" class="social">
+              <i class="fab fa-google-plus-g"></i>
+            </a>
           </div>
           <span>or use your account</span>
-          <input type="email" placeholder="Email" />
-          <input type="password" placeholder="Password" />
+          <input type="email" name="email" placeholder="Email" />
+          <input type="password" name="password" placeholder="Password" />
           <a href="#" id="forgotLink">Forgot your password?</a>
           <button>Sign In</button>
         </form>
@@ -87,7 +82,6 @@
             placeholder="Enter your email"
             required
           />
-
           <input
             type="password"
             name="newpassword"
@@ -105,6 +99,8 @@
       </div>
     </div>
 
-    <script type="module" src="/static/js/main.js"></script>
+    <script type="module" src="../static/js/main.js"></script>
+
+
   </body>
 </html>

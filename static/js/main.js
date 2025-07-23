@@ -1,3 +1,9 @@
-import { initForm } from './form.js';
+import { autoHideFlash, initForm } from './handle_index_page.js';
 
-initForm();
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  autoHideFlash();
+});
+
+initForm()

@@ -29,6 +29,15 @@ export function initForm() {
       modal.style.display = "none";
     }
   });
-
-
 }
+
+
+export function autoHideFlash() {
+  document.querySelectorAll(".alert").forEach((alert) => {
+    setTimeout(() => {
+      alert.style.opacity = "0";
+      setTimeout(() => alert.remove(), 500);
+    }, 3000);
+  });
+}
+

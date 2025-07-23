@@ -17,7 +17,6 @@ def forgot_password():
     cursor.execute("SELECT provider FROM info_user WHERE email = %s", (email,))
     result = cursor.fetchone()
 
-    print(result)
 
     if not result:
         cursor.close()
