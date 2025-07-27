@@ -6,19 +6,31 @@ upload_bp = Blueprint('upload', __name__)
 
 @upload_bp.route("/api/sensors/data", methods=["POST"])
 def receive_temperature_and_humidity():
+    device_name = request.form.get("device_name")
     temperature = float(request.form.get("temperature"))
     humidity = float(request.form.get("humidity"))
 
     cursor = db.mysql.connection.cursor()
-    cursor.execute("INSERT INTO my_data (temperature, humidity) VALUES (%s , %s)", (temperature, humidity))
+    cursor.execute("SELECT id FROM devices WHERE name = %s", (device_name,))
+    result = cursor.fetchone()
 
-    db.mysql.connection.commit()
-    cursor.close()
+    if result:
+        device_id = result[0]
+        cursor.execute("""
+            INSERT INTO sensor_data (device_id, temperature, humidity) 
+            VALUES (%s, %s, %s)
+        """, (device_id, temperature, humidity))
 
-    if temperature > 20 or humidity > 80:
-        send_mail.send_urgent_mail(temperature, humidity)
+        db.mysql.connection.commit()
+        cursor.close()
 
-    return jsonify({'status': 'success', 'message': 'Data stored'}), 200
+        if temperature > 20 or humidity > 80:
+            send_mail.send_urgent_mail(temperature, humidity)
+
+        return jsonify({'status': 'success', 'message': 'Data stored'}), 200
+    else:
+        cursor.close()
+        return jsonify({'status': 'error', 'message': 'Device not found'}), 404
 
 
 @upload_bp.route("/api/devices/register", methods=["POST"])

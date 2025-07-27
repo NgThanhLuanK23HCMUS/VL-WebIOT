@@ -14,8 +14,9 @@ def forgot_password():
 
 
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT provider FROM info_user WHERE email = %s", (email,))
+    cursor.execute("SELECT provider FROM users WHERE email = %s", (email,))
     result = cursor.fetchone()
+
 
 
     if not result:
@@ -23,8 +24,12 @@ def forgot_password():
         flash("Email does not exist", "error")
         return redirect(url_for("index"))
 
+    if result[0] == "google":
+        cursor.close()
+        flash("You can not change password of google", "error")
+        return redirect(url_for("index"))
 
-    cursor.execute("UPDATE info_user SET password = %s WHERE email = %s", (new_hashed_password, email))
+    cursor.execute("UPDATE users SET password = %s WHERE email = %s", (new_hashed_password, email))
     mysql.connection.commit()
     cursor.close()
     return redirect(url_for("index"))
