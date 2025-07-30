@@ -35,67 +35,75 @@ def receive_temperature_and_humidity():
 
 @upload_bp.route("/api/devices/register", methods=["POST"])
 def receive_information_of_device():
-    device_name = request.form.get("device_name")  # ESP32 gửi key này
-    print(device_name)
+    data = request.get_json()  
+    device_name = data.get("deviceName")  
+
+
     if not device_name:
-        return "NOT EXISTS NAME OF DEVICE!", 400
+        return jsonify({"error": "Missing device name"}), 400
 
     try:
         cursor = db.mysql.connection.cursor()
-        #check name  exists in database?
+
+        # Kiểm tra tên thiết bị đã tồn tại chưa
         cursor.execute("SELECT * FROM devices WHERE name = %s", (device_name,))
         res = cursor.fetchone()
 
         if res:
-            return "Device info already exists", 400
+            return jsonify({"error": "Device already exists"}), 400
 
+        # Thêm thiết bị mới
         cursor.execute(
             "INSERT INTO devices (name) VALUES (%s)",
             (device_name,)
         )
         db.mysql.connection.commit()
         cursor.close()
-        return "Device info received successfully", 200
+        return jsonify({"message": "Device registered successfully"}), 200
 
     except Exception as e:
-        return f"Internal Server Error: {str(e)}", 500
+        return jsonify({"error": str(e)}), 500
     
 
 @upload_bp.route("/api/user_devices", methods=["POST"])
 def receive_information_of_device_user():
-    device_name = request.form.get("device_name")  
-    user_id = request.form.get("user_id")
+    data = request.get_json()
 
-    print(user_id)
-   
+    device_name = data.get("deviceName")
+    user_id = data.get("userId")
+
+
     if not device_name:
-        return "NOT EXISTS NAME OF DEVICE!", 400
+        return jsonify({"error": "Missing device name"}), 400
 
     try:
         cursor = db.mysql.connection.cursor()
 
         cursor.execute("SELECT id FROM devices WHERE name = %s", (device_name,))
-        
         result = cursor.fetchone()
 
         if result:
-            device_id = result[0]  # vì fetchone() trả về tuple
+            device_id = result[0]
 
-
+            # Kiểm tra xem quan hệ user-device đã tồn tại chưa
             cursor.execute("SELECT * FROM user_devices WHERE user_id = %s AND device_id = %s", (user_id, device_id))
             res = cursor.fetchone()
 
             if res:
-                return "Info already exists", 400
+                return jsonify({"error": "Info already exists"}), 400
 
+            # Thêm quan hệ mới
             cursor.execute(
                 "INSERT INTO user_devices (user_id, device_id) VALUES (%s, %s)",
                 (user_id, device_id)
             )
             db.mysql.connection.commit()
             cursor.close()
-            return "Device info received successfully", 200
+            return jsonify({"message": "Device info received successfully"}), 200
+
+        else:
+            return jsonify({"error": "Device not found"}), 404
 
     except Exception as e:
-        return f"Internal Server Error: {str(e)}", 500
+        return jsonify({"error": f"Internal Server Error: {str(e)}"}), 500
 
