@@ -6,8 +6,9 @@
 extern const char* ssid;
 extern const char* password;
 
-extern const char* infoDeviceURL;
-extern const char* infoDeviceAndUserURL;
+
+extern const char* infoDeviceUrl;
+extern const char* infoDeviceAndUserUrl;
 extern const char* dataURL;
 
 #endif

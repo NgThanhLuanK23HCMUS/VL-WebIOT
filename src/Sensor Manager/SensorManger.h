@@ -19,9 +19,6 @@ public:
 
     void readTemAndHum();
 
-    // Sensor* getSensor() const {
-    //     return sensor;
-    // }
 };
 
 #endif
