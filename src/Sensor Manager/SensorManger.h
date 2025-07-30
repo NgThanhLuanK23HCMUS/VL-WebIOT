@@ -1,24 +1,19 @@
 #ifndef SENSOR_MANAGER_H
 #define SENSOR_MANAGER_H
 
-#include <DHT.h>
 #include "../Sensor/Sensor.h"
 
 class SensorManager {
-private:
-    DHT dht;
+protected:
     Sensor* sensor;
 
 public:
-    SensorManager(uint8_t pin, uint8_t type, Sensor* sensor)
-        : dht(pin, type), sensor(sensor) {}
+    SensorManager(Sensor* sensor) : sensor(sensor) {}
 
-    void begin() {
-        dht.begin();
-    }
+    virtual void begin() = 0;         // Bắt buộc lớp con phải hiện thực
+    virtual void readSensorData() = 0;
 
-    void readTemAndHum();
-
+    virtual ~SensorManager() {}
 };
 
 #endif
