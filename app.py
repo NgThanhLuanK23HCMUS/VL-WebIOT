@@ -13,8 +13,24 @@ def index():
 
 @app.route('/home')
 def home():
-    
     return render_template("home.html")
+
+
+@app.route("/control")
+def control():
+    return render_template("control_panel.html")
+
+@app.route("/analytics")
+def analytics():
+    return render_template("analytics.html")
+
+@app.route("/login")
+def login():
+    return render_template("index.html")
+
+@app.route("/monitor")
+def monitor():
+    return render_template("monitor.html")
 
 
 

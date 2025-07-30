@@ -8,7 +8,7 @@ fetch("/get_user_id")
     console.log(user_id);
     if (isSend && user_id) {
       console.log("Sending user_id:", user_id);
-      fetch("http://192.168.1.3/api/user/send_id_to_device", {
+      fetch("http://192.168.100.132/api/user/send_id_to_device", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `user_id=${user_id}`

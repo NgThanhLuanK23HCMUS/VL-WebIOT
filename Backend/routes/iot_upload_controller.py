@@ -6,9 +6,13 @@ upload_bp = Blueprint('upload', __name__)
 
 @upload_bp.route("/api/sensors/data", methods=["POST"])
 def receive_temperature_and_humidity():
-    device_name = request.form.get("device_name")
-    temperature = float(request.form.get("temperature"))
-    humidity = float(request.form.get("humidity"))
+    data = request.get_json()
+
+    device_name = data.get("device_name")
+    temperature = float(data.get("temperature"))
+    humidity = float(data.get("humidity"))
+    soilMoisture = float(data.get("soil_moisture"))
+    is_on = data.get("is_on")  # Mặc định là False nếu không gửi
 
     cursor = db.mysql.connection.cursor()
     cursor.execute("SELECT id FROM devices WHERE name = %s", (device_name,))
@@ -17,9 +21,9 @@ def receive_temperature_and_humidity():
     if result:
         device_id = result[0]
         cursor.execute("""
-            INSERT INTO sensor_data (device_id, temperature, humidity) 
-            VALUES (%s, %s, %s)
-        """, (device_id, temperature, humidity))
+            INSERT INTO sensor_data (device_id, temperature, humidity, soil_moisture, is_on)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (device_id, temperature, humidity, soilMoisture, is_on))
 
         db.mysql.connection.commit()
         cursor.close()
