@@ -8,9 +8,10 @@ private:
     int redPin;
     int yellowPin;
     int greenPin;
+    bool isOpen;
 
 public:
-    TrafficLight(int redPin, int yellowPin, int greenPin);
+    TrafficLight(int redPin, int yellowPin, int greenPin);;
 
     void begin();  // thiết lập chế độ OUTPUT
     void turnRed();
@@ -18,6 +19,10 @@ public:
     void turnGreen();
     void turnOffAll();  // tắt tất cả
     void turnOnfAll();  // tắt tất cả
+    void setIsOpen(const bool& isOpen);
+
+    bool getIsOpen();
+
 
     ~TrafficLight() {}
 };

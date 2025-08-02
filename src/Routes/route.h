@@ -2,9 +2,9 @@
 #define ROUTE_H
 #include <HTTPClient.h>
 #include <WebServer.h>
-#include "../receive data/receive_device_info.h"
+#include "../receive data/ReceiveUserInfoHandler.h"
 #include <functional>
-#include "../config.h"
+#include "../Config/urlConfig.h"
 
 struct Route
 {
@@ -13,7 +13,8 @@ struct Route
     std::function<void()> handler;
 };
 
-void setupRoutes();
+void setupAPRoutes();
+void setupWiFiRoutes();
 
 
 #endif

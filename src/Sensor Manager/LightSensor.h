@@ -6,7 +6,7 @@
 class LightSensor : public SensorManager {
 private:
     uint8_t pin;
-
+    
 public:
     LightSensor(uint8_t pin, Sensor* sensor)
         : SensorManager(sensor), pin(pin) {}

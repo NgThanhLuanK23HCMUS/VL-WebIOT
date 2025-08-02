@@ -4,6 +4,7 @@ TrafficLight::TrafficLight(int redPin, int yellowPin, int greenPin) {
     this->redPin = redPin;
     this->yellowPin = yellowPin;
     this->greenPin = greenPin;
+    this->isOpen = false;  
 }
 
 void TrafficLight::begin() {
@@ -40,4 +41,14 @@ void TrafficLight::turnOnfAll() {
     digitalWrite(redPin, HIGH);
     digitalWrite(yellowPin, HIGH);
     digitalWrite(greenPin, HIGH);
+}
+
+void TrafficLight::setIsOpen(const bool &isOpen)
+{
+    this->isOpen = isOpen;
+}
+
+bool TrafficLight::getIsOpen()
+{
+    return this->isOpen;
 }
