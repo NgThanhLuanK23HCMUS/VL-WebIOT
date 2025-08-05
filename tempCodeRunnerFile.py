@@ -1,6 +1,5 @@
 import os
-from flask import render_template, session,Flask,request,jsonify
-from Backend import chatbot as cb
+from flask import render_template, session
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 
@@ -33,15 +32,8 @@ def login():
 def monitor():
     return render_template("monitor.html")
 
-@app.route("/chatbot")
-def chatbot():
-    return render_template("chatbot.html")
 
-@app.route("/getResponse", methods=["GET", "POST"])
-def chat():
-    msg = request.form["msg"]
-    input = msg
-    return cb.chatResponse(input)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

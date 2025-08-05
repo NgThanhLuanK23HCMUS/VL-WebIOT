@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from Backend import db
-from . import send_mail
+from . import send_mail,send_sms
 upload_bp = Blueprint('upload', __name__)
 
 
@@ -30,6 +30,7 @@ def receive_temperature_and_humidity():
 
         if temperature > 20 or humidity > 80:
             send_mail.send_urgent_mail(temperature, humidity)
+            send_sms.send_urgent_message(temperature,humidity)
 
         return jsonify({'status': 'success', 'message': 'Data stored'}), 200
     else:
