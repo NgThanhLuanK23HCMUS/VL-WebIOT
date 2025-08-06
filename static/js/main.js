@@ -1,5 +1,5 @@
 import { autoHideFlash, initForm } from "./handle_index_page.js";
-import { setupLedControl, setUpBeepControl, handleSyncButton } from "./handle_control_panel_home.js";
+import { setupLedControl, setUpBeepControl, setUpAutoModeControl, setUpPumpControl } from "./handle_control_panel_home.js";
 import { sendUserIdIfNeeded } from "./handle_home_page.js";
 
 const path = window.location.pathname;
@@ -8,11 +8,12 @@ if (path === "/home") {
 } else if (path === "/control") {
   setupLedControl();
   setUpBeepControl();
-} else if (path === "/index") {
+  setUpAutoModeControl();
+  setUpPumpControl();
+  setUp
+} else if (path === "/" || path === "/index" || path === "/login" || path === "/signup") {
   document.addEventListener("DOMContentLoaded", () => {
     autoHideFlash();
+    initForm();
   });
-  initForm();
 }
-
-handleSyncButton();
