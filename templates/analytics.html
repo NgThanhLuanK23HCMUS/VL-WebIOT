@@ -90,6 +90,32 @@
         Empowering you to care for your plants with smart technology
       </p>
     </div>
+    <div class="container bg-light p-4 rounded shadow" style="max-width: 800px;">
+    <h2 class="mb-4">Biểu đồ nhiệt độ</h2>
+    <canvas id="myChart"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    fetch("/getDataThingSpeak")
+        .then(response => response.json())
+        .then(chartData => {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        label: 'Nhiệt độ (°C)',
+                        data: chartData.values,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                }
+            });
+        });
+    </script>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
