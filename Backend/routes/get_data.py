@@ -38,3 +38,41 @@ def receive_control_mode():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+
+@get_data_bp.route("/get/control/status", methods=["GET"])
+def get_control_status():
+    user_id = request.args.get("userId")
+
+    try:
+        cursor = db.mysql.connection.cursor()
+
+        cursor.execute("SELECT device_id FROM user_devices WHERE user_id = %s", (user_id,))
+        result = cursor.fetchone()
+
+        if result:
+            id_devices = result[0]
+
+            # Lấy trạng thái thiết bị từ bảng devices
+            cursor.execute("SELECT control_mode, led, pump, beep FROM devices WHERE id = %s LIMIT 1", (id_devices,))
+            res = cursor.fetchone()
+
+            if res:
+                control_mode, led, pump, beep = res
+                return jsonify({
+                    "mode": control_mode,
+                    "led": bool(led),
+                    "pump": bool(pump),
+                    "beep": bool(beep),
+                })
+
+            else:
+                return jsonify({"error": "Không tìm thấy trạng thái"}), 404
+        else:
+            return jsonify({"error": "Không tìm thấy thiết bị"}), 404
+
+    except Exception as e:
+        return jsonify({"error": f"Lỗi server: {str(e)}"}), 500
+
+
