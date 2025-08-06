@@ -175,7 +175,7 @@ void SendSensorDataHandler::sendCurrentTimeToThingSpeak(int field)
 
     // --- 2) Gán giá trị mới cho field được chỉ định ---
     // Nếu bạn muốn lưu "turned_on" dưới dạng số (0/1), chuyển trước khi gán.
-    fields[field] = String("turned_on");
+    fields[field] = String("1");
 
     // In ra các giá trị trước khi gửi
     Serial.println("📋 Giá trị sẽ gửi (field1..field6):");
