@@ -14,7 +14,7 @@
 Preferences preferences;
 WebServer* server = new WebServer(80);
 unsigned long lastReadTime = 0;
-const unsigned long readInterval = 120000;  // 60,000 ms = 1 phút
+const unsigned long readInterval = 60000;  // 60,000 ms = 1 phút
 
 const unsigned long pumpInterval = 60000;
 extern unsigned long lastPumpTime ;
@@ -50,14 +50,14 @@ void setup() {
   }
 
   initializeGlobalSensorConfig();
-  initializeGlobalHandlers(sensor, trafficLight, relay);
+  initializeGlobalHandlers(sensor, trafficLight, relay, buzzer);
   tempAndHumSensor->begin();
   soilSensor->begin();
   lightSensor->begin();
   trafficLight->begin();
   relay->begin();
   shockSensor->begin();
-  // buzzer->begin();
+  buzzer->begin();
 }
 
 void runAutoModeApp(){
@@ -76,15 +76,17 @@ void runAutoModeApp(){
     lastReadTime = currentTime;
     tempAndHumSensor->readSensorData();
     soilSensor->readSensorData();
-    if (sendSensorDataHandler != nullptr) 
-    sendSensorDataHandler->send(dataUrl);
-    sendSensorDataHandler->sendToThingSpeak();
+    if (sendSensorDataHandler != nullptr){
+
+      // sendSensorDataHandler->send(dataUrl);
+      sendSensorDataHandler->sendToThingSpeak();
+    } 
     
   }
   
   shockSensor->readSensorData();
   if(!shockSensor->getIsShock()){
-    sendSensorDataHandler->sendShockData(shockDataUrl);
+    // sendSensorDataHandler->sendShockData(shockDataUrl);
     sendSensorDataHandler->sendCurrentTimeToThingSpeak(5);
   }
 
@@ -95,6 +97,7 @@ void turnOffAllDevices() {
   trafficLight->turnOffAll();
   relay->setIsOn(false);
   relay->turnOff();
+
 }
 
 
@@ -133,15 +136,28 @@ void runManualModeApp() {
   }
  
 
+  // Serial.println(buzzer->getIsBeep());
+  if (buzzer->getIsBeep()) {
+    if (!buzzer->getIsPlayingTone()) {
+      buzzer->playTone(500);                // chỉ play 1 lần
+      buzzer->setIsPlayingTone(true);       // đánh dấu đã play
+      lastBuzzerTime = millis();            // bắt đầu tính thời gian tắt
+    }
+
+    if (millis() - lastBuzzerTime >= 2000) {
+      buzzer->stopTone();
+      buzzer->setIsBeep(false);             // reset để không play lại
+      buzzer->setIsPlayingTone(false);      // cho phép play ở lần sau
+    }
+  }
+
+
 }
 
 
 
 
 void loop() {
-
-  // lightSensor->readSensorData();
-
 
   server->handleClient();  // Luôn xử lý request
   if(isFinishedConfigWifi){

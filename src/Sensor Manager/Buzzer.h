@@ -22,15 +22,14 @@ class Buzzer {
 private:
     int pin;
     bool isBeep;
-    unsigned long startTime;
-    int currentDuration;
+    bool isPlayingTone;
 
 public:
-    Buzzer(int pin) : pin(pin), isBeep(false), startTime(0), currentDuration(0) {}
+    Buzzer(int pin) : pin(pin), isBeep(false), isPlayingTone(false)  {}
 
     void begin();
 
-    void playTone(int frequency, int duration);
+    void playTone(int frequency);
 
     void stopTone();
 
@@ -38,6 +37,14 @@ public:
     bool getIsBeep();
 
     void setIsBeep(bool isBeep);
+
+    bool getIsPlayingTone() {
+        return isPlayingTone;
+    }
+
+    void setIsPlayingTone(bool val) {
+        isPlayingTone = val;
+    }
 };
 
 #endif

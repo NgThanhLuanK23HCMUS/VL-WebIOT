@@ -82,7 +82,7 @@ void SendSensorDataHandler::sendToThingSpeak()
 
     // Tạo payload form-encoded: api_key=...&field1=...&field2=...
     String postData = "api_key=";
-    postData += String(writeKey);
+    postData += String(write_key);
     postData += "&field1=" + String(soilMoisture, 2);
     postData += "&field2=" + String(temperature, 2);
     postData += "&field3=" + String(humidity, 2);

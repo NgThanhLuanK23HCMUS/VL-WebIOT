@@ -27,7 +27,7 @@ extern ReceiveControlModeHandler* receiveControlModeHandler;
 extern ReceiveLedConfigHandler* receiveLedConfigHandler;
 extern ReceiveWifiConfigHandler* receiveWifiConfigHandler;
 extern ReceivePumpConfigHandler* receivePumpConfigHandler;
-// extern ReceiveBuzzerConfigHandler* receiveBuzzerConfigHandler;
+extern ReceiveBuzzerConfigHandler* receiveBuzzerConfigHandler;
 
 
 extern SendDeviceInfoHandler* sendDeviceInfoHandler;
@@ -36,5 +36,5 @@ extern SendDeviceInfoAndUserHandler* sendDeviceInfoAndUserHandler;
 extern SendControlModeHandler* sendControlModelHandler;
 
 // Hàm khởi tạo tất cả các handler
-void initializeGlobalHandlers(Sensor* sensor, TrafficLight* trafficLight, Relay* relay);
+void initializeGlobalHandlers(Sensor* sensor, TrafficLight* trafficLight, Relay* relay, Buzzer* buzzer);
 #endif

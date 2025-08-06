@@ -8,21 +8,21 @@ ReceiveControlModeHandler* receiveControlModeHandler = nullptr;
 ReceiveLedConfigHandler* receiveLedConfigHandler = nullptr;
 ReceiveWifiConfigHandler* receiveWifiConfigHandler = nullptr;
 ReceivePumpConfigHandler* receivePumpConfigHandler = nullptr;
-// ReceiveBuzzerConfigHandler* receiveBuzzerConfigHandler = nullptr;
+ReceiveBuzzerConfigHandler* receiveBuzzerConfigHandler = nullptr;
 
 SendDeviceInfoHandler* sendDeviceInfoHandler = nullptr;
 SendSensorDataHandler* sendSensorDataHandler = nullptr;
 SendDeviceInfoAndUserHandler* sendDeviceInfoAndUserHandler = nullptr;
 SendControlModeHandler* sendControlModelHandler = nullptr;
 
-void initializeGlobalHandlers(Sensor* sensor, TrafficLight* trafficLight, Relay* relay) {
+void initializeGlobalHandlers(Sensor* sensor, TrafficLight* trafficLight, Relay* relay, Buzzer* buzzer) {
     receiveUserInfoHandler = new ReceiveUserInfoHandler("");
     receiveConfigPageHandler = new ReceiveConfigPageHandler();
     receiveControlModeHandler = new ReceiveControlModeHandler();
     receiveLedConfigHandler = new ReceiveLedConfigHandler(trafficLight);
     receivePumpConfigHandler = new ReceivePumpConfigHandler(relay);
     receiveWifiConfigHandler = new ReceiveWifiConfigHandler();
-    // receiveBuzzerConfigHandler = new ReceiveBuzzerConfigHandler(buzzer);
+    receiveBuzzerConfigHandler = new ReceiveBuzzerConfigHandler(buzzer);
 
 
     sendDeviceInfoHandler = new SendDeviceInfoHandler("ESP32", "1");

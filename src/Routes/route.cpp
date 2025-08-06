@@ -37,11 +37,11 @@ Route wifiRoutes[] = {
         HTTP_POST,
         []() { receivePumpConfigHandler->handle(server); }
     },
-    // {
-    //     "/api/control_beep",
-    //     HTTP_POST,
-    //     []() { receiveBuzzerConfigHandler->handle(server); }
-    // },
+    {
+        "/api/control_beep",
+        HTTP_POST,
+        []() { receiveBuzzerConfigHandler->handle(server); }
+    },
     {
         "/api/control_mode",
         HTTP_POST,

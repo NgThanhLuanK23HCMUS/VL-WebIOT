@@ -13,5 +13,4 @@ void LightSensor::readSensorData()
 
         bool digitalValue = digitalRead(pin);
         trafficLight->setIsOpen(digitalValue);
-        buzzer->playTone(100, 500);
 }

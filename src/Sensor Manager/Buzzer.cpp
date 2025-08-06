@@ -1,10 +1,7 @@
 #include "Buzzer.h"
 #include <driver/ledc.h>
 
-// Buzzer::Buzzer(int pin) {
-//     this->pin = pin;
-//     this->isBeep = false;
-// }
+
 
 void Buzzer::begin() {
     pinMode(pin, OUTPUT);
@@ -22,14 +19,13 @@ void Buzzer::setIsBeep(bool isBeep) {
 }
 
 
-void Buzzer::playTone(int frequency, int duration) {
-    tone(pin, frequency, duration);
+void Buzzer::playTone(int frequency) {
+    tone(pin, frequency);
 
 }
 
 void Buzzer::stopTone() {
     noTone(pin);
-    // isBeep = false;
-    // currentDuration = 0;
+
 }
 
