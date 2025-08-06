@@ -9,7 +9,7 @@ private:
     int yellowPin;
     int greenPin;
     bool isOpen;
-
+    
 public:
     TrafficLight(int redPin, int yellowPin, int greenPin);;
 

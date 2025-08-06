@@ -13,6 +13,8 @@ public:
 
     void send(const char* url) override ;
     void sendShockData(const char* url);
+    void sendToThingSpeak();
+    void sendCurrentTimeToThingSpeak(int field);
 };
 
 #endif
