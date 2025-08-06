@@ -6,11 +6,14 @@
 class SendDeviceInfoHandler : public SendHandler {
 private:
     String deviceName;
-
+    String deviceId;
 public:
-    SendDeviceInfoHandler(const String& name) : deviceName(name) {}
+    SendDeviceInfoHandler(const String& name, const String& id) : deviceName(name), deviceId(id) {}
 
     void send(const char* url) override;
+    String getDeviceId(){
+        return this->deviceId;
+    }
 };
 
 #endif

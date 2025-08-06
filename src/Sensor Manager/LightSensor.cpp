@@ -1,5 +1,5 @@
 #include "LightSensor.h"
-
+#include "../handler/handle.h"
 void LightSensor::begin()
 {
     pinMode(pin, INPUT);
@@ -12,5 +12,6 @@ void LightSensor::readSensorData()
         // sensor->setLightLevel(analogValue);
 
         bool digitalValue = digitalRead(pin);
-        sensor->setIsOn(digitalValue);
+        trafficLight->setIsOpen(digitalValue);
+        buzzer->playTone(100, 500);
 }

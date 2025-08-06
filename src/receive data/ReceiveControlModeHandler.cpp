@@ -15,10 +15,12 @@ void ReceiveControlModeHandler::handle(WebServer *server)
             String mode = server->arg("mode");
 
             if (mode == "auto") {
-                controlMode = true;
+                this->controlMode = "auto";
             } else if (mode == "manual") {
-                controlMode = false;
-            } else {
+                this->controlMode = "manual";
+            } else if (mode == "null") { 
+                this->controlMode = "null";
+            }else {
                 server->send(400, "text/plain", "Invalid 'mode' value");
                 return;
             }

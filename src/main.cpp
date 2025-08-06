@@ -13,11 +13,20 @@
 
 Preferences preferences;
 WebServer* server = new WebServer(80);
-String user_id = "";
-// Handle* handle = new Handle();
 unsigned long lastReadTime = 0;
-const unsigned long readInterval = 10000;  // 60,000 ms = 1 phút
+const unsigned long readInterval = 120000;  // 60,000 ms = 1 phút
+
+const unsigned long pumpInterval = 60000;
+extern unsigned long lastPumpTime ;
+unsigned long lastPumpTime = 0;
+
+extern unsigned long lastBuzzerTime;
+unsigned long lastBuzzerTime = 0;
+
+
 bool wifiJustConnectedFromAP = false;
+bool isFinishedConfigWifi = false;
+
 
 enum AppState {
   STATE_WIFI_CONFIG,
@@ -25,56 +34,116 @@ enum AppState {
   STATE_WAIT_FOR_WIFI_CONFIG,
   STATE_WIFI_CONNECTED, 
   STATE_AUTO_MODE,
-  STATE_MANUAL_MODE
+  STATE_MANUAL_MODE, 
+  STATE_ERROR_MODE
 };
 AppState currentState = STATE_WIFI_CONFIG;
 
 
-
 void setup() {
-  
+ 
   Serial.begin(115200);
-  resetPreferences();
+  // resetPreferences();
   if (!SPIFFS.begin(true)) {
     Serial.println("Lỗi SPIFFS");
     return;
   }
 
   initializeGlobalSensorConfig();
-  initializeGlobalHandlers(sensor, trafficLight);
-
+  initializeGlobalHandlers(sensor, trafficLight, relay);
   tempAndHumSensor->begin();
   soilSensor->begin();
   lightSensor->begin();
   trafficLight->begin();
+  relay->begin();
+  shockSensor->begin();
+  // buzzer->begin();
 }
 
-void runMainApp(){
+void runAutoModeApp(){
   lightSensor->readSensorData();
-  if(sensor->getIsOn()) {
+  if(trafficLight->getIsOpen()) {
     trafficLight->turnOnfAll();
   } else {
     trafficLight->turnOffAll();
   }
-  server->handleClient();  
+
+
+
   unsigned long currentTime = millis();
+  
   if (currentTime - lastReadTime >= readInterval) {
     lastReadTime = currentTime;
     tempAndHumSensor->readSensorData();
     soilSensor->readSensorData();
     if (sendSensorDataHandler != nullptr) 
-      sendSensorDataHandler->send(dataUrl);
+    sendSensorDataHandler->send(dataUrl);
+    
   }
+  
+  shockSensor->readSensorData();
+  if(!shockSensor->getIsShock()){
+    sendSensorDataHandler->sendShockData(shockDataUrl);
+  }
+
+}
+
+void turnOffAllDevices() {
+  trafficLight->setIsOpen(false);
+  trafficLight->turnOffAll();
+  relay->setIsOn(false);
+  relay->turnOff();
+}
+
+
+void getCurrentState() {
+  String controlMode = receiveControlModeHandler->getControlMode();
+  if (controlMode == "auto") {
+    if(currentState !=  STATE_AUTO_MODE)
+      turnOffAllDevices(); 
+    currentState = STATE_AUTO_MODE;
+  } else if (controlMode == "manual") {
+    if(currentState !=  STATE_MANUAL_MODE)
+      turnOffAllDevices(); 
+    currentState = STATE_MANUAL_MODE;
+  } else if (controlMode == "null") {
+    currentState = STATE_ERROR_MODE;
+  }
+}
+
+void runManualModeApp() {
+  if (trafficLight->getIsOpen()) {
+    trafficLight->turnOnfAll();
+  } else {
+    trafficLight->turnOffAll();
+  }
+
+  if(relay->getIsOn()) {
+    if (millis() - lastPumpTime >= pumpInterval) {
+      relay->turnOff();  
+      relay->setIsOn(false); 
+    }
+    else{
+      relay->turnOn();  
+    }
+  }
+
+
 }
 
 
 
+
 void loop() {
+
+  // lightSensor->readSensorData();
+
+
   server->handleClient();  // Luôn xử lý request
- 
+  if(isFinishedConfigWifi){
+    getCurrentState();  
+  }
 
-
-    
   switch (currentState) {
     case STATE_WIFI_CONFIG:
       Serial.println("Đang kết nối WiFi đã lưu...");
@@ -107,33 +176,30 @@ void loop() {
       break;
 
     case STATE_AUTO_MODE:
-      if(receiveControlModeHandler->getControlMode() == false) 
-        currentState = STATE_MANUAL_MODE;
-      
-      runMainApp();    
+      runAutoModeApp();    
       break;
 
     case STATE_MANUAL_MODE:
-      if(receiveControlModeHandler->getControlMode() == true) {
-        currentState = STATE_AUTO_MODE;
-      }
-
-      if(trafficLight->getIsOpen()) {
-        trafficLight->turnOnfAll();
-      } else {
-        trafficLight->turnOffAll();
-      }
+      runManualModeApp();
       break;
+
+
+    case STATE_ERROR_MODE:
+      turnOffAllDevices();
+      break;
+
+
+
     case STATE_WIFI_CONNECTED:
       if (wifiJustConnectedFromAP) {
         setupWiFiRoutes();     
         server->begin();     
         sendDeviceInfoHandler->send(infoDeviceUrl);
-        wifiJustConnectedFromAP = false;    
-        currentState = STATE_AUTO_MODE;
+        wifiJustConnectedFromAP = false; 
+        isFinishedConfigWifi = true;     
+        currentState = STATE_ERROR_MODE;
       }          
       break;
   }
 }
-
 

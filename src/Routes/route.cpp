@@ -4,7 +4,6 @@
 #include <SPIFFS.h>
 
 extern WebServer* server;
-// extern Handle* handle;
 extern Sensor* sensor;
 
 // Route cho AP Mode
@@ -32,10 +31,16 @@ Route wifiRoutes[] = {
         HTTP_POST,
         []() { receiveLedConfigHandler->handle(server); }
     },
+
+    {
+        "/api/control_pump", 
+        HTTP_POST,
+        []() { receivePumpConfigHandler->handle(server); }
+    },
     // {
     //     "/api/control_beep",
     //     HTTP_POST,
-    //     []() { handle->handleReceiveBeepConfig(buzzer, server); }
+    //     []() { receiveBuzzerConfigHandler->handle(server); }
     // },
     {
         "/api/control_mode",

@@ -4,20 +4,19 @@
 #include "ReceiveHandler.h"
 #include <WebServer.h>
 
-extern bool controlMode;
 
 class ReceiveControlModeHandler : public ReceiveHandler {
 private:
-    bool controlMode = false; 
+    String controlMode = "null"; 
 public:
     void handle(WebServer* server) override;
 
-    void setControlMode(bool mode) {
+    void setControlMode(String mode) {
         controlMode = mode;
     }
 
-    bool getControlMode() const {
-        return controlMode;
+    String getControlMode() const {
+        return this->controlMode;
     }
 };
 

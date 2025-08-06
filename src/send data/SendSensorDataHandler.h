@@ -12,6 +12,7 @@ public:
     SendSensorDataHandler(Sensor* s) : sensor(s) {}
 
     void send(const char* url) override ;
+    void sendShockData(const char* url);
 };
 
 #endif

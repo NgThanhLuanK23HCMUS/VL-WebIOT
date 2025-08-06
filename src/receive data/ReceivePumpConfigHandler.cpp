@@ -1,7 +1,10 @@
-#include "ReceiveLedConfigHandler.h"
+#include "ReceivePumpConfigHandler.h"
 
-void ReceiveLedConfigHandler::handle(WebServer *server)
+
+extern unsigned long lastPumpTime;
+void ReceivePumpConfigHandler::handle(WebServer *server)
 {
+
     if (server->method() == HTTP_OPTIONS) {
         // Cho phép các domain khác gọi API này
         server->sendHeader("Access-Control-Allow-Origin", "*");
@@ -15,12 +18,14 @@ void ReceiveLedConfigHandler::handle(WebServer *server)
         if (server->hasArg("state")) {
             String state = server->arg("state");
             if (state == "on") {
-                trafficLight->setIsOpen(true);
+                relay->setIsOn(true);
+                lastPumpTime = millis();  
             } else {
-                trafficLight->setIsOpen(false);
+                relay->setIsOn(false);
+                relay->turnOff(); 
             }
 
-            server->sendHeader("Access-Control-Allow-Origin", "*");  // CORS cho POST
+            server->sendHeader("Access-Control-Allow-Origin", "*");  
             server->send(200, "text/plain", "OK");
         } else {
             server->send(400, "text/plain", "Missing 'state' param");

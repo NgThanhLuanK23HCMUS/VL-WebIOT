@@ -10,6 +10,7 @@ void SendDeviceInfoHandler::send(const char *url)
 
         // Tạo dữ liệu JSON
         String jsonData = "{";
+        jsonData += "\"deviceId\":\"" + deviceId + "\",";
         jsonData += "\"deviceName\":\"" + deviceName + "\"";
         jsonData += "}";
 

@@ -5,16 +5,16 @@
 
 class SendDeviceInfoAndUserHandler : public SendHandler {
 private:
-    String deviceName;
+    String deviceId;
     String userId;
 
 public:
-    SendDeviceInfoAndUserHandler(const String& name, const String& uid)
-        : deviceName(name), userId(uid) {}
+    SendDeviceInfoAndUserHandler(const String& id, const String& uid)
+        : deviceId(id), userId(uid) {}
 
     void send(const char* url) override;
-    void setDeviceName(const String& name) {
-        deviceName = name;
+    void setDeviceId(const String& id) {
+        deviceId = id;
     }
     void setUserId(const String& uid) {
         userId = uid;

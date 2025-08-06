@@ -37,3 +37,26 @@ void SendSensorDataHandler::send(const char *url)
         Serial.println("WiFi không kết nối!");
     }
 }
+
+void SendSensorDataHandler::sendShockData(const char *url)
+{
+    if (WiFi.status() == WL_CONNECTED) {
+        HTTPClient http;
+
+        String fullUrl = String(url) + "?data=1";
+
+        http.begin(fullUrl);
+
+        int responseCode = http.GET();  
+
+        if (responseCode > 0) {
+            Serial.println("📬 Response: " + http.getString());
+        } else {
+            Serial.printf("❌ Lỗi gửi dữ liệu: %s\n", http.errorToString(responseCode).c_str());
+        }
+
+        http.end();
+    } else {
+        Serial.println("WiFi không kết nối!");
+    }
+}
