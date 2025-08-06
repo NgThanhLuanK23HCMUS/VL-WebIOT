@@ -100,38 +100,77 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-      // Lấy dữ liệu từ Flask
+      // Plugin tô màu trung tâm
+      const createCenterBackground = (color = '#2c3e50') => ({
+        id: 'centerBackground',
+        beforeDraw(chart) {
+          const { ctx, chartArea: { left, right, top, bottom } } = chart;
+          const centerX = (left + right) / 2;
+          const centerY = (top + bottom) / 2;
+          const radius = chart._metasets[0].data[0].outerRadius * parseFloat(chart.config.options.cutout) / 100;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+          ctx.fillStyle = color;
+          ctx.fill();
+          ctx.restore();
+        }
+      });
+
+      // Plugin vẽ text trung tâm
+      const createCenterText = (text = '', color = 'white', fontSize = 'bold 24px Arial') => ({
+        id: 'centerText',
+        afterDraw(chart) {
+          const { ctx, chartArea: { left, right, top, bottom } } = chart;
+          const centerX = (left + right) / 2;
+          const centerY = (top + bottom) / 2;
+
+          ctx.save();
+          ctx.font = fontSize;
+          ctx.fillStyle = color;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(text, centerX, centerY);
+          ctx.restore();
+        }
+      });
+
+      // Tạo biểu đồ
+      function createDoughnutChart(canvasId, dataValue, maxValue, colors) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Value', 'Remaining'],
+            datasets: [{
+              data: [dataValue, maxValue - dataValue],
+              backgroundColor: colors,
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: false,
+            cutout: '80%',
+            plugins: {
+              legend: { display: false },
+              tooltip: { enabled: false }
+            }
+          },
+          plugins: [
+            createCenterBackground(colors[1]),
+            createCenterText(dataValue.toString(), colors[0])
+          ]
+        });
+      }
+
       const sensorData = JSON.parse('{{ data|tojson|safe }}');
       const soilMoisture = sensorData[0];
       const airTemperature = sensorData[1];
       const airHumidity = sensorData[2];
-
-      function createDoughnutChart(canvasId, dataValue, maxValue, colors) {
-        const ctx = document.getElementById(canvasId).getContext("2d");
-        new Chart(ctx, {
-          type: "doughnut",
-          data: {
-            labels: ["Value", "Remaining"],
-            datasets: [{
-              data: [dataValue, maxValue - dataValue],
-              backgroundColor: colors,
-              borderWidth: 0,
-            }],
-          },
-          options: {
-            responsive: false,
-            cutout: "80%",
-            plugins: {
-              legend: { display: false },
-              tooltip: { enabled: false },
-            },
-          },
-        });
-      }
-
-      createDoughnutChart("moistureChart", soilMoisture, 1024, ["#f5a623", "#2c3e50"]);
-      createDoughnutChart("moistureChart1", airHumidity, 1024, ["#b85c5c", "#2c3e50"]);
-      createDoughnutChart("temperatureChart", airTemperature, 100, ["#00ffff", "#2c3e50"]);
+      createDoughnutChart('moistureChart', soilMoisture, 1024, ['#f5a623', '#2c3e50']); // Soil Moisture
+      createDoughnutChart('moistureChart1', airHumidity, 1024, ['#b85c5c', '#2c3e50']);  // Air Moisture
+      createDoughnutChart('temperatureChart', airTemperature, 100, ['#00ffff', '#2c3e50']); // Air Temp
     </script>
     {% else %}
     <p class="text-danger">Không có dữ liệu để hiển thị.</p>
