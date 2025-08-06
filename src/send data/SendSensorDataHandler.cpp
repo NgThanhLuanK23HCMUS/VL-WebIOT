@@ -79,10 +79,6 @@ void SendSensorDataHandler::sendToThingSpeak()
     float humidity = sensor->getHumidity();
     float temperature = sensor->getTemperature();
     float soilMoisture = sensor->getSoilMoisture();
-    bool is_on = sensor->getIsOn();
-
-    // Chuyển boolean sang số (0/1)
-    int is_on_int = is_on ? 1 : 0;
 
     // Tạo payload form-encoded: api_key=...&field1=...&field2=...
     String postData = "api_key=";
