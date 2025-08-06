@@ -108,7 +108,7 @@ void SendSensorDataHandler::sendToThingSpeak()
 }
 
 
-void SendSensorDataHandler::sendToThingSpeak(int field)
+void SendSensorDataHandler::sendCurrentTimeToThingSpeak(int field)
 {
     // Cấu hình channel / keys — đổi theo channel của bạn nếu cần
     const char* channel_id = "3027556";          // channel ID
