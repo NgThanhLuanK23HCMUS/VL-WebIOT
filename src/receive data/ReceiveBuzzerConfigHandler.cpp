@@ -17,7 +17,6 @@ void ReceiveBuzzerConfigHandler::handle(WebServer *server)
     if (server->method() == HTTP_POST) {
         if (server->hasArg("state")) {
             String state = server->arg("state");
-            Serial.println(state);
             
             if (state == "on") {
                 lastBuzzerTime = millis();

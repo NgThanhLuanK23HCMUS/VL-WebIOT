@@ -16,7 +16,7 @@ WebServer* server = new WebServer(80);
 unsigned long lastReadTime = 0;
 const unsigned long readInterval = 20000;  // 60,000 ms = 1 phút
 
-const unsigned long pumpInterval = 30000;
+const unsigned long pumpInterval = 20000;
 extern unsigned long lastPumpTime ;
 unsigned long lastPumpTime = 0;
 
@@ -78,16 +78,26 @@ void runAutoModeApp(){
     lastReadTime = currentTime;
     tempAndHumSensor->readSensorData();
     soilSensor->readSensorData();
-    Serial.println(sensor->getTemperature());
-    Serial.println(sensor->getTemperatureThreshold());
+
     if (sensor->getTemperature() > sensor->getTemperatureThreshold() || 
         sensor->getHumidity() > sensor->getHumidityThreshold() 
         // || sensor->getSoilMoisture() < sensor->getSoilThreshold()) {
     )
     {
       sendSensorDataHandler->send(dataUrl);
+      if(!relay->getIsOn()) {
+        relay->turnOn();
+        relay->setIsOn(true);
+        lastPumpTime = millis();  
+      }
+
     } 
+
     
+  }
+  if(relay->getIsOn() && (millis() - lastPumpTime >= pumpInterval)) {
+    relay->turnOff();
+    relay->setIsOn(false);
   }
   
   shockSensor->readSensorData();
@@ -161,8 +171,6 @@ void runManualModeApp() {
 
 
 void loop() {
-
-
 
   server->handleClient();  // Luôn xử lý request
   if(isFinishedConfigWifi){
