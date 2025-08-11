@@ -2,9 +2,9 @@ from flask_mail import Message
 from Backend.mail import mail
 import os
 
-def send_urgent_mail_for_temp_and_humid(temperature, humidity):
+def send_urgent_mail_for_temp_and_humid(temperature, humidity, email):
 
-        recipient = "nttien232@clc.fitus.edu.vn"
+        recipient = email
         subject = "Thông báo từ ESP32"
         sender = os.getenv("MAIL_USERNAME")
 

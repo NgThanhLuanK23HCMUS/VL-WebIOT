@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from Backend import db
 from . import send_mail,send_sms
 upload_bp = Blueprint('upload', __name__)
@@ -6,36 +6,51 @@ upload_bp = Blueprint('upload', __name__)
 
 @upload_bp.route("/api/sensors/data", methods=["POST"])
 def receive_temperature_and_humidity():
-    data = request.get_json()
+    cursor = None
+    try:
+        data = request.get_json(force=True)
+        
+        device_id = data.get("device_id")
+        user_id = data.get("user_id")
+        temperature = float(data.get("temperature"))
+        humidity = float(data.get("humidity"))
+        soil_moisture = float(data.get("soil_moisture"))
 
-    device_name = data.get("device_name")
-    temperature = float(data.get("temperature"))
-    humidity = float(data.get("humidity"))
-    soilMoisture = float(data.get("soil_moisture"))
-    is_on = data.get("is_on")  # Mặc định là False nếu không gửi
+        if device_id is None or temperature == 0.0 or humidity == 0.0:
+            return jsonify({'status': 'fail', 'message': 'device_id is required'}), 400
 
-    cursor = db.mysql.connection.cursor()
-    cursor.execute("SELECT id FROM devices WHERE name = %s", (device_name,))
-    result = cursor.fetchone()
+        cursor = db.mysql.connection.cursor()
 
-    if result:
-        device_id = result[0]
+        cursor.execute("SELECT COUNT(*) FROM devices WHERE id = %s", (device_id,))
+        (count,) = cursor.fetchone()
+        if count == 0:
+            return jsonify({'status': 'fail', 'message': f'Device ID {device_id} not registered'}), 400
+
         cursor.execute("""
-            INSERT INTO sensor_data (device_id, temperature, humidity, soil_moisture, is_on)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (device_id, temperature, humidity, soilMoisture, is_on))
-
+            INSERT INTO sensor_data (device_id, temperature, humidity, soil_moisture)
+            VALUES (%s, %s, %s, %s)
+        """, (device_id, temperature, humidity, soil_moisture))
         db.mysql.connection.commit()
-        cursor.close()
 
-        if temperature > 20 or humidity > 80:
-            send_mail.send_urgent_mail_for_temp_and_humid(temperature, humidity)
-            # send_sms.send_urgent_message(temperature,humidity)
+        
+
+
+        if user_id and (temperature > 20 or humidity > 80):
+            cursor.execute("SELECT email FROM users WHERE id = %s", (user_id,))
+            res = cursor.fetchone()
+            if res:
+                email = res[0]
+                print(email)
+                send_mail.send_urgent_mail_for_temp_and_humid(temperature, humidity, email)
 
         return jsonify({'status': 'success', 'message': 'Data stored'}), 200
-    else:
-        cursor.close()
-        return jsonify({'status': 'error', 'message': 'Device not found'}), 404
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+
 
 
 from flask import jsonify
