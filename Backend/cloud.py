@@ -58,9 +58,9 @@ def get_data():
     try:
         cur = mysql.connection.cursor()
         cur.execute("""
-            SELECT id
+            SELECT device_id
             FROM sensor_data
-            ORDER BY created_at DESC
+            ORDER BY timestamp DESC
             LIMIT 1
         """)
         row = cur.fetchone()
