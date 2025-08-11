@@ -15,9 +15,9 @@ def send_data():
         cur = mysql.connection.cursor()
 
         cur.execute("""
-            SELECT user_id, soil_moisture, temperature, humidity_air, created_at
+            SELECT id, soil_moisture, temperature, humidity_air, timestamp
             FROM sensor_data
-            ORDER BY created_at DESC
+            ORDER BY timestamp DESC
             LIMIT 1
         """)
         row = cur.fetchone()
@@ -58,7 +58,7 @@ def get_data():
     try:
         cur = mysql.connection.cursor()
         cur.execute("""
-            SELECT user_id
+            SELECT id
             FROM sensor_data
             ORDER BY created_at DESC
             LIMIT 1
