@@ -2,6 +2,7 @@ import os
 from flask import render_template, session,Flask,request,jsonify
 from Backend import chatbot as cb
 from Backend import cloud as cl
+import threading
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 
@@ -48,6 +49,8 @@ def chat():
 def get_data():
     return cl.get_data()
 
+
 if __name__ == "__main__":
+    thread = threading.Thread(target=cl.send_data_loop, daemon=True)
     app.run(host="0.0.0.0", port=5000, debug=True)
 
