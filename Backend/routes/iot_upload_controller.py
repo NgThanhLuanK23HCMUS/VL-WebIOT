@@ -4,6 +4,7 @@ from Backend import cloud
 from . import send_mail,send_sms
 upload_bp = Blueprint('upload', __name__)
 
+user_id_global = None
 
 @upload_bp.route("/api/sensors/data", methods=["POST"])
 def receive_temperature_and_humidity():
@@ -13,6 +14,11 @@ def receive_temperature_and_humidity():
         
         device_id = data.get("device_id")
         user_id = data.get("user_id")
+        if user_id:
+            global user_id_global
+            user_id_global = user_id
+
+        print(user_id_global)
         temperature = float(data.get("temperature"))
         humidity = float(data.get("humidity"))
         soil_moisture = float(data.get("soil_moisture"))
