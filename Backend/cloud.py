@@ -10,17 +10,12 @@ WRITE_API_KEY = "5YDUCIRMRS3IAAT4"
 FIELD_NUM = 2
 NUM_RESULTS = 50 
 
-
-
-CHANNEL_ID = "3027556"
-WRITE_API_KEY = "5YDUCIRMRS3IAAT4"
-
 def send_data():
     try:
         cur = mysql.connection.cursor()
 
         cur.execute("""
-            SELECT soil_moisture, temperature, humidity_air, created_at
+            SELECT user_id, soil_moisture, temperature, humidity_air, created_at
             FROM sensor_data
             ORDER BY created_at DESC
             LIMIT 1
@@ -32,21 +27,22 @@ def send_data():
             print("Không có dữ liệu trong database.")
             return False
 
-        soil_moisture, temperature, humidity_air, created_time = row
+        user_id, soil_moisture, temperature, humidity_air, created_time = row
 
         params = {
             "api_key": WRITE_API_KEY,
             "field1": soil_moisture,
             "field2": temperature,
             "field3": humidity_air,
-            "created_at": created_time.strftime("%Y-%m-%d %H:%M:%S")
+            "field4": user_id,  # Lưu user_id vào field4
+            "created_at": created_time.strftime("%Y-%m-%dT%H:%M:%SZ")
         }
 
         url = "https://api.thingspeak.com/update"
         response = requests.get(url, params=params)
 
         if response.status_code == 200 and response.text.strip().isdigit():
-            print(f"Gửi thành công! Entry ID: {response.text.strip()}")
+            print(f"Gửi thành công! Entry ID: {response.text.strip()} - User: {user_id}")
             return True
         else:
             print(f"Lỗi khi gửi dữ liệu: {response.text}")
@@ -59,34 +55,60 @@ def send_data():
 
 
 def get_data():
-    url = f"https://api.thingspeak.com/channels/{CHANNEL_ID}/feeds.json?results={NUM_RESULTS}"
-    if READ_API_KEY:
-        url += f"&api_key={READ_API_KEY}"
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("""
+            SELECT user_id
+            FROM sensor_data
+            ORDER BY created_at DESC
+            LIMIT 1
+        """)
+        row = cur.fetchone()
+        cur.close()
 
-    response = requests.get(url)
-    data = response.json()
+        if not row:
+            print("Không tìm thấy user_id trong database.")
+            return jsonify({"error": "No user_id found in database"}), 404
 
-    labels = []
-    soil_moisture = []   # Field 1
-    temperature = []     # Field 2
-    humidity_air = []    # Field 3
+        current_user_id = str(row[0])
+        print(f"Đang lấy dữ liệu cho user_id: {current_user_id}")
 
-    for feed in data['feeds']:
-        # Định dạng thời gian
-        time_str = datetime.strptime(feed['created_at'], "%Y-%m-%dT%H:%M:%SZ").strftime("%H:%M %d/%m")
-        labels.append(time_str)
+        # Lấy dữ liệu từ ThingSpeak
+        url = f"https://api.thingspeak.com/channels/{CHANNEL_ID}/feeds.json?results={NUM_RESULTS}"
+        if READ_API_KEY:
+            url += f"&api_key={READ_API_KEY}"
 
-        # Lấy dữ liệu, nếu None thì để None
-        soil_moisture.append(float(feed['field1']) if feed['field1'] else None)
-        temperature.append(float(feed['field2']) if feed['field2'] else None)
-        humidity_air.append(float(feed['field3']) if feed['field3'] else None)
+        response = requests.get(url)
+        data = response.json()
 
-    return jsonify({
-        "labels": labels,
-        "soil_moisture": soil_moisture,
-        "temperature": temperature,
-        "humidity_air": humidity_air
-    })
+        labels = []
+        soil_moisture = []
+        temperature = []
+        humidity_air = []
+
+        for feed in data['feeds']:
+            # Chỉ lấy dữ liệu của user hiện tại
+            if str(feed.get('field4')) != current_user_id:
+                continue
+
+            # Định dạng thời gian
+            time_str = datetime.strptime(feed['created_at'], "%Y-%m-%dT%H:%M:%SZ").strftime("%H:%M %d/%m")
+            labels.append(time_str)
+
+            soil_moisture.append(float(feed['field1']) if feed['field1'] else None)
+            temperature.append(float(feed['field2']) if feed['field2'] else None)
+            humidity_air.append(float(feed['field3']) if feed['field3'] else None)
+
+        return jsonify({
+            "labels": labels,
+            "soil_moisture": soil_moisture,
+            "temperature": temperature,
+            "humidity_air": humidity_air
+        })
+
+    except Exception as e:
+        print(f"Lỗi khi lấy dữ liệu: {e}")
+        return jsonify({"error": str(e)}), 500
 
 
 def send_data_loop():
