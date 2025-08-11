@@ -1,7 +1,7 @@
 from flask import jsonify
 import requests
 from datetime import datetime
-from db import mysql
+from Backend.db import mysql
 import time
 
 CHANNEL_ID = "3027556" 
