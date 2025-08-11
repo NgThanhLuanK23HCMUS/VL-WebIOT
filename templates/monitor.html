@@ -83,7 +83,7 @@
       crossorigin="anonymous"
     ></script>
 
-    <!-- Biểu đồ 1: Soil Moisture -->
+    <!-- Biểu đồ 1: Soil Moisture
   {% if data %}
     <div class="d-flex flex-column justify-content-center align-items-center text-white text-center">
       <div class="lead fw-bold">Soil Moisture</div>
@@ -94,7 +94,36 @@
 
       <div class="lead fw-bold">Air Temperature</div>
       <canvas id="temperatureChart" width="200" height="200"></canvas>
+    </div> -->
+  {% if data %}
+  <div class="container mt-5">
+    <div class="row justify-content-center text-white text-center">
+      <!-- Hàng đầu: 1 biểu đồ ở giữa -->
+      <div class="col-12 d-flex justify-content-center mb-4">
+        <div>
+          <div class="lead fw-bold">Soil Moisture</div>
+          <canvas id="moistureChart" width="200" height="200"></canvas>
+        </div>
+      </div>
+
+      <!-- Hàng dưới: 2 biểu đồ trái - phải -->
+      <div class="col-6 d-flex justify-content-end">
+        <div>
+          <div class="lead fw-bold">Air Moisture</div>
+          <canvas id="moistureChart1" width="200" height="200"></canvas>
+        </div>
+      </div>
+      <div class="col-6 d-flex justify-content-start">
+        <div>
+          <div class="lead fw-bold">Air Temperature</div>
+          <canvas id="temperatureChart" width="200" height="200"></canvas>
+        </div>
+      </div>
     </div>
+  </div>
+  {% else %}
+  <p class="text-danger">Không có dữ liệu để hiển thị.</p>
+  {% endif %}
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
