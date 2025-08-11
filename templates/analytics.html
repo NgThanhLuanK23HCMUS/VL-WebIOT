@@ -69,9 +69,6 @@
                 >Analytics</a
               >
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-            </li>
           </ul>
         </div>
       </div>
@@ -130,58 +127,58 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-    fetch("/getDataThingSpeak")  
-        .then(response => response.json())
-        .then(chartData => {
-            const ctx = document.getElementById('myChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: chartData.labels,
-                    datasets: [
-                        {
-                            label: 'Độ ẩm đất (%)',
-                            data: chartData.soil_moisture,
-                            borderColor: 'rgb(75, 192, 192)',
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            tension: 0.1
-                        },
-                        {
-                            label: 'Nhiệt độ (°C)',
-                            data: chartData.temperature,
-                            borderColor: 'rgb(255, 99, 132)',
-                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                            tension: 0.1
-                        },
-                        {
-                            label: 'Độ ẩm không khí (%)',
-                            data: chartData.humidity,
-                            borderColor: 'rgb(54, 162, 235)',
-                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                            tension: 0.1
-                        }
-                    ]
+      fetch("/getDataThingSpeak")
+        .then((response) => response.json())
+        .then((chartData) => {
+          const ctx = document.getElementById("myChart").getContext("2d");
+          new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: chartData.labels,
+              datasets: [
+                {
+                  label: "Độ ẩm đất (%)",
+                  data: chartData.soil_moisture,
+                  borderColor: "rgb(75, 192, 192)",
+                  backgroundColor: "rgba(75, 192, 192, 0.2)",
+                  tension: 0.1,
                 },
-                options: {
-                    responsive: true,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
-                    stacked: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Biểu đồ cảm biến từ ThingSpeak'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
+                {
+                  label: "Nhiệt độ (°C)",
+                  data: chartData.temperature,
+                  borderColor: "rgb(255, 99, 132)",
+                  backgroundColor: "rgba(255, 99, 132, 0.2)",
+                  tension: 0.1,
+                },
+                {
+                  label: "Độ ẩm không khí (%)",
+                  data: chartData.humidity,
+                  borderColor: "rgb(54, 162, 235)",
+                  backgroundColor: "rgba(54, 162, 235, 0.2)",
+                  tension: 0.1,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              interaction: {
+                mode: "index",
+                intersect: false,
+              },
+              stacked: false,
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Biểu đồ cảm biến từ ThingSpeak",
+                },
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                },
+              },
+            },
+          });
         });
     </script>
 
@@ -190,5 +187,6 @@
       integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
       crossorigin="anonymous"
     ></script>
+    {% include "config.html" %}
   </body>
 </html>
