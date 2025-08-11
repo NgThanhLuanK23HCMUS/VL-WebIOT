@@ -3,23 +3,26 @@ export function sendUserIdIfNeeded() {
 
   let isSend = isSendStr === null ? true : isSendStr === "true";
 
-  fetch("/get_user_id")
-    .then((res) => res.json())
-    .then((data) => {
-      const user_id = data.user_id;
+  if (isSend) {
+    fetch("/get_user_id")
+      .then((res) => res.json())
+      .then((data) => {
+        const user_id = data.user_id;
 
-      console.log(user_id);
-      console.log(isSend);
-      if (isSend && user_id) {
-        fetch("http://192.168.1.10/api/user/send_id_to_device", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `user_id=${user_id}`,
-        }).then((response) => {
-          if (response.ok) {
-            sessionStorage.setItem("isSend", "false");
-          }
-        });
-      }
-    });
+        console.log(user_id);
+        console.log(isSend);
+        if (user_id) {
+          fetch("http://192.168.100.132/api/user/send_id_to_device", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `user_id=${user_id}`,
+          }).then((response) => {
+            if (response.ok) {
+              console.log("haha");
+              sessionStorage.setItem("isSend", "false");
+            }
+          });
+        }
+      });
+  }
 }

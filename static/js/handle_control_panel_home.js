@@ -7,13 +7,24 @@ const [led, pump, beep] = ["control_led", "control_pump", "control_beep"];
 // Gọi khi load trang
 window.addEventListener("DOMContentLoaded", async () => {
   userId = await getUserId();
-  console.log(userId);
-  await syncControlStateFromServer();
 
-  setupLedControl();
-  setUpPumpControl();
-  setUpBeepControl();
-  setUpAutoModeControl();
+  await syncControlStateFromServer();
+  const led_device = document.getElementById("led");
+  const pump_device = document.getElementById("pump");
+  const beep_device = document.getElementById("beep");
+  const auto_device = document.getElementById("autoMode");
+
+  if (led_device.checked || pump.checked || beep.checked)
+    controlMode = "manual";
+  else {
+    if (auto_device.checked) controlMode = "auto";
+    else controlMode = "null";
+  }
+  sendControlMode(controlMode, userId);
+  sendDeviceControl(led, led_device.checked);
+  sendDeviceControl(pump, pump_device.checked);
+  sendDeviceControl(beep, beep_device.checked);
+
 });
 
 // Gửi trạng thái điều khiển lên server và ESP32
@@ -21,7 +32,7 @@ function sendControlMode(mode, user_id) {
   const urlServer = `/api/update/control/mode?mode=${mode}&user_id=${encodeURIComponent(
     user_id
   )}`;
-  const urlESP32 = "http://192.168.1.10/api/control_mode";
+  const urlESP32 = "http://192.168.100.132/api/control_mode";
 
   fetch(urlServer, { method: "GET" })
     .then((res) => {
@@ -47,7 +58,7 @@ function sendControlMode(mode, user_id) {
 // Gửi điều khiển thiết bị + cập nhật server
 function sendDeviceControl(endpoint, state) {
   // Gửi ESP32
-  fetch(`http://192.168.1.10/api/${endpoint}`, {
+  fetch(`http://192.168.100.132/api/${endpoint}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",

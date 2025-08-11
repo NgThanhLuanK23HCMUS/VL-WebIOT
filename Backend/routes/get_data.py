@@ -44,6 +44,7 @@ def get_user_id():
     return jsonify({"user_id": session["user_id"]})
 
 
+
 @get_data_bp.route("/api/control_mode", methods=["POST"])
 def receive_control_mode():
     data = request.get_json()
