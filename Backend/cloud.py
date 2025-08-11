@@ -15,7 +15,7 @@ def send_data():
         cur = mysql.connection.cursor()
 
         cur.execute("""
-            SELECT id, soil_moisture, temperature, humidity_air, timestamp
+            SELECT id, soil_moisture, temperature, humidity, timestamp
             FROM sensor_data
             ORDER BY timestamp DESC
             LIMIT 1

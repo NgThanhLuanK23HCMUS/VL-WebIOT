@@ -49,10 +49,11 @@ def chat():
 def get_data():
     return cl.get_data()
 
+@app.before_first_request
+def start_background_thread():
+    thread = threading.Thread(target=cl.send_data_loop, daemon=True)
+    thread.start()
 
 if __name__ == "__main__":
-    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":  # chỉ chạy ở process chính sau khi reload
-        thread = threading.Thread(target=cl.send_data_loop, daemon=True)
-        thread.start()
     app.run(host="0.0.0.0", port=5000, debug=True)
 
