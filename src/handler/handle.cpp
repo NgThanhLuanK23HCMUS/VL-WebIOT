@@ -9,6 +9,8 @@ ReceiveLedConfigHandler* receiveLedConfigHandler = nullptr;
 ReceiveWifiConfigHandler* receiveWifiConfigHandler = nullptr;
 ReceivePumpConfigHandler* receivePumpConfigHandler = nullptr;
 ReceiveBuzzerConfigHandler* receiveBuzzerConfigHandler = nullptr;
+ReceiveThresholdConfigHandler* receiveThresholdConfigHandler = nullptr;
+
 
 SendDeviceInfoHandler* sendDeviceInfoHandler = nullptr;
 SendSensorDataHandler* sendSensorDataHandler = nullptr;
@@ -23,7 +25,8 @@ void initializeGlobalHandlers(Sensor* sensor, TrafficLight* trafficLight, Relay*
     receivePumpConfigHandler = new ReceivePumpConfigHandler(relay);
     receiveWifiConfigHandler = new ReceiveWifiConfigHandler();
     receiveBuzzerConfigHandler = new ReceiveBuzzerConfigHandler(buzzer);
-
+    receiveThresholdConfigHandler = new ReceiveThresholdConfigHandler(sensor);
+    
 
     sendDeviceInfoHandler = new SendDeviceInfoHandler(device);
     sendSensorDataHandler = new SendSensorDataHandler(sensor, device);

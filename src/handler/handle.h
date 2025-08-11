@@ -14,6 +14,8 @@
 #include "../receive data/ReceiveWifiConfigHandler.h"
 #include "../receive data/ReceivePumpConfigHandler.h"
 #include "../receive data/ReceiveBuzzerConfigHandler.h"
+#include "../receive data/ReceiveThresholdConfigHandler.h"
+
 
 #include "../send data/SendDeviceInfoHandler.h"
 #include "../send data/SendSensorDataHandler.h"
@@ -29,7 +31,7 @@ extern ReceiveLedConfigHandler* receiveLedConfigHandler;
 extern ReceiveWifiConfigHandler* receiveWifiConfigHandler;
 extern ReceivePumpConfigHandler* receivePumpConfigHandler;
 extern ReceiveBuzzerConfigHandler* receiveBuzzerConfigHandler;
-
+extern ReceiveThresholdConfigHandler* receiveThresholdConfigHandler;
 
 extern SendDeviceInfoHandler* sendDeviceInfoHandler;
 extern SendSensorDataHandler* sendSensorDataHandler;

@@ -46,7 +46,13 @@ Route wifiRoutes[] = {
         "/api/control_mode",
         HTTP_POST,
         []() { receiveControlModeHandler->handle(server); }
-    }
+    },  
+
+    {
+        "/api/save/threshold",
+        HTTP_POST,
+        []() { receiveThresholdConfigHandler->handle(server); }
+    },
     
 };
 

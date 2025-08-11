@@ -78,8 +78,13 @@ void runAutoModeApp(){
     lastReadTime = currentTime;
     tempAndHumSensor->readSensorData();
     soilSensor->readSensorData();
-    if (sendSensorDataHandler != nullptr){
-
+    Serial.println(sensor->getTemperature());
+    Serial.println(sensor->getTemperatureThreshold());
+    if (sensor->getTemperature() > sensor->getTemperatureThreshold() || 
+        sensor->getHumidity() > sensor->getHumidityThreshold() 
+        // || sensor->getSoilMoisture() < sensor->getSoilThreshold()) {
+    )
+    {
       sendSensorDataHandler->send(dataUrl);
     } 
     
@@ -156,6 +161,8 @@ void runManualModeApp() {
 
 
 void loop() {
+
+
 
   server->handleClient();  // Luôn xử lý request
   if(isFinishedConfigWifi){
