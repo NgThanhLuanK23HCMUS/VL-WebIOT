@@ -2,6 +2,7 @@ from flask import Blueprint, request, redirect, url_for, flash, session
 from flask_dance.contrib.google import google
 from Backend import db
 from Backend.utils import hash_util
+from Backend.cloud import send_time
 
 sign_in_bp = Blueprint("sign_in", __name__)
 
@@ -27,6 +28,8 @@ def signin_manual():
 
     user_id = result[0]
     session["user_id"] = user_id  
+
+    send_time(user_id)
 
     return redirect(url_for("home"))
 
@@ -54,11 +57,12 @@ def signin_google():
         user = result[0]
         user_id = user
         session["user_id"] = user_id  
+        send_time(user_id)
         return redirect(url_for("home"))
     else:
         flash("Email is not registered", "error")
 
-
+    
     return redirect(url_for("index"))
     
 

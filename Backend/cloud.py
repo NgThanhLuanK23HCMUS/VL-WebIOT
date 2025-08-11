@@ -2,11 +2,14 @@ from flask import jsonify
 import requests
 from datetime import datetime
 from Backend.db import mysql
+from zoneinfo import ZoneInfo
 import time
 
 CHANNEL_ID = "3027556" 
-READ_API_KEY = "MOK8E9XJGEBTER1I"  
-WRITE_API_KEY = "5YDUCIRMRS3IAAT4"
+WRITE_API_KEY = "NX3PTBRLDUG0YVQS" # access time channel
+READ_API_KEY = "JBI37JNC3B9ETYIK"
+READ_API_KEY1 = "MOK8E9XJGEBTER1I"  # other data channel temp, humid and moisture
+WRITE_API_KEY1 = "5YDUCIRMRS3IAAT4"
 FIELD_NUM = 2
 NUM_RESULTS = 50 
 
@@ -27,10 +30,10 @@ def send_data(user_id, soil_moisture, temperature, humidity):
             print("Không có dữ liệu trong database.")
             return False
 
-        user_id, soil_moisture, temperature, humidity, created_time = row
+        user_id, soil_moisture, temperature, humidity = row
 
         params = {
-            "api_key": WRITE_API_KEY,
+            "api_key": WRITE_API_KEY1,
             "field1": soil_moisture,
             "field2": temperature,
             "field3": humidity,
@@ -75,8 +78,8 @@ def get_data():
 
         # Lấy dữ liệu từ ThingSpeak
         url = f"https://api.thingspeak.com/channels/{CHANNEL_ID}/feeds.json?results={NUM_RESULTS}"
-        if READ_API_KEY:
-            url += f"&api_key={READ_API_KEY}"
+        if READ_API_KEY1:
+            url += f"&api_key={READ_API_KEY1}"
 
         response = requests.get(url)
         data = response.json()
@@ -115,3 +118,72 @@ def get_data():
 #     while True:
 #         send_data()
 #         time.sleep(60)
+def send_time(user_id):
+    vn_tz = ZoneInfo("Asia/Ho_Chi_Minh")
+    now_vn = datetime.now(vn_tz)
+
+    formatted_time = now_vn.strftime('%Y-%m-%dT%H:%M:%S%z')
+
+    url = "https://api.thingspeak.com/update"
+    payload = {
+        'api_key': WRITE_API_KEY,
+        'field1': formatted_time,
+        'field2': user_id
+    }
+
+    response = requests.post(url, data=payload)
+
+    if response.status_code == 200:
+        if response.text == '0':
+            print("Không có trường dữ liệu hợp lệ được cập nhật")
+        else:
+            print(f"Gửi thành công, entry ID: {response.text}")
+    else:
+        print(f"Lỗi khi gửi dữ liệu: {response.status_code}")
+
+
+def get_time():
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("""
+            SELECT device_id
+            FROM sensor_data
+            ORDER BY timestamp DESC
+            LIMIT 1
+        """)
+        row = cur.fetchone()
+        cur.close()
+
+        if not row:
+            print("Không tìm thấy user_id trong database.")
+            return jsonify({"error": "No user_id found in database"}), 404
+
+        user_id = str(row[0])
+        url = f"https://api.thingspeak.com/channels/{CHANNEL_ID}/feeds.json?results={NUM_RESULTS}"
+        if READ_API_KEY:
+            url += f"&api_key={READ_API_KEY}"
+
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+
+        times = []
+        for feed in data.get('feeds', []):
+            if str(feed.get('field2')) != str(user_id):
+                continue
+
+            created_at = feed.get('created_at')
+            if created_at:
+                try:
+                    time_str = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ").strftime("%H:%M %d/%m/%Y")
+                except:
+                    time_str = created_at
+                times.append(time_str)
+
+        if not times:
+            return jsonify({"message": "Không tìm thấy dữ liệu cho user_id này"}), 404
+
+        return jsonify({"access_times": times})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

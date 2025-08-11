@@ -49,6 +49,10 @@ def chat():
 def get_data():
     return cl.get_data()
 
+@app.route("/getTimeThingSpeak")
+def get_time():
+    return cl.get_time()
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 
