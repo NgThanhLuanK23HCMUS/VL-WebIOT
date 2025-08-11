@@ -81,7 +81,6 @@ void runAutoModeApp(){
     if (sendSensorDataHandler != nullptr){
 
       sendSensorDataHandler->send(dataUrl);
-      // sendSensorDataHandler->sendToThingSpeak();
     } 
     
   }
@@ -89,7 +88,6 @@ void runAutoModeApp(){
   shockSensor->readSensorData();
   if(!shockSensor->getIsShock()){
     // sendSensorDataHandler->sendShockData(shockDataUrl);
-    // sendSensorDataHandler->sendCurrentTimeToThingSpeak(5);
   }
 
 }
@@ -129,7 +127,6 @@ void runManualModeApp() {
     if (millis() - lastPumpTime >= pumpInterval) {
       relay->turnOff();  
       relay->setIsOn(false); 
-      sendSensorDataHandler->sendCurrentTimeToThingSpeak(4);
     }
     else{
 
