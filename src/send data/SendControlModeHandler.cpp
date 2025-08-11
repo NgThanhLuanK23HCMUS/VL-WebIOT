@@ -13,7 +13,7 @@ void SendControlModeHandler::send(const char *url)
         http.addHeader("Content-Type", "application/json");
 
         String jsonData = "{";
-        jsonData += "\"deviceId\":\"" + sendDeviceInfoHandler->getDeviceId() + "\"";
+        jsonData += "\"deviceId\":\"" + device->getDeviceId() + "\"";
         jsonData += "}";
 
         int httpResponseCode = http.POST(jsonData); 

@@ -2,7 +2,7 @@
 #include <time.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
-
+#include "../handler/handle.h"
 
 void SendSensorDataHandler::send(const char *url)
 {
@@ -14,14 +14,13 @@ void SendSensorDataHandler::send(const char *url)
         float humidity = sensor->getHumidity();
         float temperature = sensor->getTemperature();
         float soilMoisture = sensor->getSoilMoisture();
-        bool is_on = sensor->getIsOn();
 
         String json = "{";
-        json += "\"device_name\":\"" + sensor->getDeviceName() + "\",";
+        json += "\"device_id\":\"" + device->getDeviceId() + "\",";
+        json += "\"user_id\":\"" + device->getUserId() + "\",";
         json += "\"temperature\":" + String(temperature, 2) + ",";
         json += "\"humidity\":" + String(humidity, 2) + ",";
-        json += "\"soil_moisture\":" + String(soilMoisture, 2) + ",";
-        json += "\"is_on\":" + String(is_on);
+        json += "\"soil_moisture\":" + String(soilMoisture, 2) ;
         json += "}";
 
         Serial.println("📦 JSON gửi đi:");

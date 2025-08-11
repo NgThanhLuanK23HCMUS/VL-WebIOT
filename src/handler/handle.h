@@ -4,6 +4,7 @@
 
 #include <WebServer.h>
 #include "../Sensor/Sensor.h"
+#include "../Sensor/Device.h"
 #include "../Sensor Manager/TrafficLight.h"
 
 #include "../receive data/ReceiveUserInfoHandler.h"
@@ -36,5 +37,5 @@ extern SendDeviceInfoAndUserHandler* sendDeviceInfoAndUserHandler;
 extern SendControlModeHandler* sendControlModelHandler;
 
 // Hàm khởi tạo tất cả các handler
-void initializeGlobalHandlers(Sensor* sensor, TrafficLight* trafficLight, Relay* relay, Buzzer* buzzer);
+void initializeGlobalHandlers(Sensor* sensor, TrafficLight* trafficLight, Relay* relay, Buzzer* buzzer, Device* device);
 #endif

@@ -14,14 +14,16 @@
 Preferences preferences;
 WebServer* server = new WebServer(80);
 unsigned long lastReadTime = 0;
-const unsigned long readInterval = 60000;  // 60,000 ms = 1 phút
+const unsigned long readInterval = 20000;  // 60,000 ms = 1 phút
 
-const unsigned long pumpInterval = 60000;
+const unsigned long pumpInterval = 30000;
 extern unsigned long lastPumpTime ;
 unsigned long lastPumpTime = 0;
 
+const unsigned long beepInterval = 30000;
 extern unsigned long lastBuzzerTime;
 unsigned long lastBuzzerTime = 0;
+const int frequency = 500;
 
 
 bool wifiJustConnectedFromAP = false;
@@ -50,7 +52,7 @@ void setup() {
   }
 
   initializeGlobalSensorConfig();
-  initializeGlobalHandlers(sensor, trafficLight, relay, buzzer);
+  initializeGlobalHandlers(sensor, trafficLight, relay, buzzer, device);
   tempAndHumSensor->begin();
   soilSensor->begin();
   lightSensor->begin();
@@ -78,8 +80,8 @@ void runAutoModeApp(){
     soilSensor->readSensorData();
     if (sendSensorDataHandler != nullptr){
 
-      // sendSensorDataHandler->send(dataUrl);
-      sendSensorDataHandler->sendToThingSpeak();
+      sendSensorDataHandler->send(dataUrl);
+      // sendSensorDataHandler->sendToThingSpeak();
     } 
     
   }
@@ -87,7 +89,7 @@ void runAutoModeApp(){
   shockSensor->readSensorData();
   if(!shockSensor->getIsShock()){
     // sendSensorDataHandler->sendShockData(shockDataUrl);
-    sendSensorDataHandler->sendCurrentTimeToThingSpeak(5);
+    // sendSensorDataHandler->sendCurrentTimeToThingSpeak(5);
   }
 
 }
@@ -136,18 +138,17 @@ void runManualModeApp() {
   }
  
 
-  // Serial.println(buzzer->getIsBeep());
   if (buzzer->getIsBeep()) {
-    if (!buzzer->getIsPlayingTone()) {
-      buzzer->playTone(500);                // chỉ play 1 lần
-      buzzer->setIsPlayingTone(true);       // đánh dấu đã play
-      lastBuzzerTime = millis();            // bắt đầu tính thời gian tắt
+    if (!buzzer->getIsPlayingTone()) { //cho play 1 lần thôi
+      buzzer->playTone(frequency);                
+      buzzer->setIsPlayingTone(true);      
+      lastBuzzerTime = millis();           
     }
 
-    if (millis() - lastBuzzerTime >= 2000) {
+    if (millis() - lastBuzzerTime >= beepInterval) {
       buzzer->stopTone();
-      buzzer->setIsBeep(false);             // reset để không play lại
-      buzzer->setIsPlayingTone(false);      // cho phép play ở lần sau
+      buzzer->setIsBeep(false);            
+      buzzer->setIsPlayingTone(false);     
     }
   }
 
@@ -181,19 +182,26 @@ void loop() {
       setupAPMode();       
       setupAPRoutes();         
       server->begin();         
+      receiveWifiConfigHandler->setConfigFinished("null");
+
       Serial.println("Server AP mode đã khởi động");
       currentState = STATE_WAIT_FOR_WIFI_CONFIG;
       break;
 
-    case STATE_WAIT_FOR_WIFI_CONFIG:
-      if (receiveWifiConfigHandler->getFinishedConfigWifi()) {
+    case STATE_WAIT_FOR_WIFI_CONFIG:{
+      String state_wifi_config = receiveWifiConfigHandler->getFinishedConfigWifi();
+      if (state_wifi_config == "true") {
         Serial.println("WiFi đã được cấu hình, đang kết nối...");
         wifiJustConnectedFromAP = true;  
-         Serial.println(WiFi.localIP());
+        Serial.println(WiFi.localIP());
 
         currentState = STATE_WIFI_CONNECTED;
       }
+      else if (state_wifi_config == "false"){
+        currentState = STATE_AP_MODE;
+      }
       break;
+    }
 
     case STATE_AUTO_MODE:
       runAutoModeApp();    

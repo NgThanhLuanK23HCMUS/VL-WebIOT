@@ -4,6 +4,7 @@
 
 
 Sensor* sensor = nullptr;
+Device* device = nullptr;
 SensorManager* tempAndHumSensor = nullptr;
 SensorManager* soilSensor = nullptr;
 SensorManager* lightSensor = nullptr;
@@ -14,7 +15,8 @@ Buzzer* buzzer = nullptr;
 
 void initializeGlobalSensorConfig()
 {
-    sensor = new Sensor("ESP32");
+    sensor = new Sensor();
+    device = new Device("1", "", "ESP32");
     tempAndHumSensor = new TemperatureAndHumiditySensor(DHTPIN, DHTTYPE, sensor);
     soilSensor = new SoilMoistureSensor(PIN_SOIL_MOISTURE, sensor);
     lightSensor = new LightSensor(PIN_LIGHT_SENSOR, sensor);

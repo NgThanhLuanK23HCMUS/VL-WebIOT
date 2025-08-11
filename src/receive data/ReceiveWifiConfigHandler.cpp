@@ -3,12 +3,12 @@ extern Preferences preferences;
 
 void ReceiveWifiConfigHandler::handle(WebServer *server)
 {
-     String ssid = server->arg("ssid");
+    String ssid = server->arg("ssid");
     String password = server->arg("password");
 
     if (ssid == "" || password.length() < 8) {
         server->send(400, "text/plain", "❌ SSID hoặc mật khẩu không hợp lệ");
-        this->finishConfigWifi = false;
+        this->finishConfigWifi = "false";
     }
 
     Serial.println("🧠 Nhận được SSID: " + ssid);
@@ -33,11 +33,13 @@ void ReceiveWifiConfigHandler::handle(WebServer *server)
     if (WiFi.status() == WL_CONNECTED) {
         Serial.println("\nKết nối WiFi thành công sau khi cấu hình");
         server->send(200, "text/plain", "Kết nối WiFi thành công. Đang chuyển trạng thái...");
-        this->finishConfigWifi = true;
+        this->finishConfigWifi = "true";
+
     } else {
         Serial.println("\nKết nối thất bại. Giữ nguyên chế độ cấu hình.");
         server->send(200, "text/plain", "Không thể kết nối WiFi. Vui lòng kiểm tra lại.");
-        this->finishConfigWifi = false;
-
+        this->finishConfigWifi = "false";
+        WiFi.disconnect(true);  
+        delay(1000);
     }
 }

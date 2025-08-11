@@ -3,6 +3,7 @@
 #define GLOBAL_SENSOR_CONFIG_H
 
 #include "../Sensor/Sensor.h"
+#include "../Sensor/Device.h"
 #include "../Sensor Manager/SensorManger.h"
 #include "../Sensor Manager/TemperatureAndHumiditySensor.h"
 #include "../Sensor Manager/SoilMoistureSensor.h"
@@ -19,11 +20,13 @@
 #define PIN_SHOCK_SENSOR 34
 #define PIN_RELAY 33
 #define PIN_BUZZER 27
-#define RED 5
+
+#define RED 19
 #define YELLOW 18
-#define GREEN 19
+#define GREEN 5
 
 extern Sensor* sensor;
+extern Device* device;
 extern SensorManager* tempAndHumSensor;
 extern SensorManager* soilSensor;
 extern SensorManager* lightSensor;

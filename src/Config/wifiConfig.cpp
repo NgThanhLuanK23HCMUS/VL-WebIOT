@@ -40,8 +40,11 @@ bool connectToSavedWiFi() {
 }
 
 void setupAPMode() {
-    WiFi.softAP("ESP32_NTT", "123456789");
-    IPAddress IP = WiFi.softAPIP();
-    Serial.println("🔧 AP mode IP: " + IP.toString());
+  WiFi.disconnect(true);       
+  delay(1000);                 
+  WiFi.mode(WIFI_AP);        
+  WiFi.softAP("ESP32_NTT", "123456789");
+  IPAddress IP = WiFi.softAPIP();
+  Serial.println("🔧 AP mode IP: " + IP.toString());
 }
 

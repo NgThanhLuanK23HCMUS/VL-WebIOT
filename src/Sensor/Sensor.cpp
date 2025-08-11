@@ -20,14 +20,8 @@ float Sensor::getLightLevel()
     return this->lightLevel;
 }
 
-bool Sensor::getIsOn()
-{
-    return this->isOn;
-}
 
-String Sensor::getDeviceName(){
-    return this->device_name;
-}
+
 
 void Sensor::setTemperature(const float &temperature)
 {
@@ -49,7 +43,3 @@ void Sensor::setLightLevel(const float &lightLevel)
     this->lightLevel = lightLevel;
 }
 
-void Sensor::setIsOn(const bool &isOn)
-{
-    this->isOn = isOn;
-}

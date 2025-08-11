@@ -7,14 +7,14 @@
 
 class ReceiveWifiConfigHandler : public ReceiveHandler {
 private:
-    bool finishConfigWifi = false; 
+    String finishConfigWifi = "null"; 
 public:
     void handle(WebServer* server) override;
 
-    bool getFinishedConfigWifi() const {
+    String getFinishedConfigWifi() const {
         return finishConfigWifi;
     }
-    void setConfigFinished(bool finished) {
+    void setConfigFinished(String finished) {
         finishConfigWifi = finished;
     }
 };

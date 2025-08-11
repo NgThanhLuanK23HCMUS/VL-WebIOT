@@ -2,18 +2,16 @@
 #define SEND_DEVICE_INFO_HANDLER_H
 
 #include "SendHandler.h"
+#include "../Config/globalSensorConfig.h"
 
 class SendDeviceInfoHandler : public SendHandler {
 private:
-    String deviceName;
-    String deviceId;
+    Device* device;
 public:
-    SendDeviceInfoHandler(const String& name, const String& id) : deviceName(name), deviceId(id) {}
+    SendDeviceInfoHandler(Device* device) : device(device) {}
 
     void send(const char* url) override;
-    String getDeviceId(){
-        return this->deviceId;
-    }
+
 };
 
 #endif
