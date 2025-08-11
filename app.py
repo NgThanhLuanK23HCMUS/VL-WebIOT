@@ -1,10 +1,8 @@
 import os
-from flask import render_template, session,Flask,request,jsonify
+from flask import render_template, session,request,redirect, url_for
 from Backend import chatbot as cb
 from Backend import cloud as cl
-import threading
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-
 
 from Backend import create_app
 app = create_app()
@@ -16,15 +14,21 @@ def index():
 
 @app.route('/home')
 def home():
+    if "user_id" not in session:
+        return render_template("index.html")
     return render_template("home.html")
 
 
 @app.route("/control")
 def control():
+    if "user_id" not in session:
+        return render_template("index.html")
     return render_template("control_panel.html")
 
 @app.route("/analytics")
 def analytics():
+    if "user_id" not in session:
+        return render_template("index.html")
     return render_template("analytics.html")
 
 @app.route("/login")
@@ -33,10 +37,14 @@ def login():
 
 @app.route("/monitor")
 def monitor():
+    if "user_id" not in session:
+        return render_template("index.html")
     return render_template("monitor.html")
 
 @app.route("/chatbot")
 def chatbot():
+    if "user_id" not in session:
+        return render_template("index.html")
     return render_template("chatbot.html")
 
 @app.route("/getResponse", methods=["GET", "POST"])

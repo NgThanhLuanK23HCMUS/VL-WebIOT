@@ -28,8 +28,9 @@ def signin_manual():
 
     user_id = result[0]
     session["user_id"] = user_id  
+ 
 
-    send_time(user_id)
+    # send_time(user_id)
 
     return redirect(url_for("home"))
 
@@ -57,7 +58,7 @@ def signin_google():
         user = result[0]
         user_id = user
         session["user_id"] = user_id  
-        send_time(user_id)
+        # send_time(user_id)
         return redirect(url_for("home"))
     else:
         flash("Email is not registered", "error")

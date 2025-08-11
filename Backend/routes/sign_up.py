@@ -62,7 +62,6 @@ def signup_google():
     # get id to store session 
     cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
     user_id = cursor.fetchone()[0]
-    print(user_id)
     session["user_id"] = user_id  
 
     cursor.close()
