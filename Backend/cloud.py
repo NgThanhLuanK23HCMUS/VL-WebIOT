@@ -10,7 +10,7 @@ WRITE_API_KEY = "5YDUCIRMRS3IAAT4"
 FIELD_NUM = 2
 NUM_RESULTS = 50 
 
-def send_data():
+def send_data(user_id, soil_moisture, temperature, humidity, created_time):
     try:
         cur = mysql.connection.cursor()
 
@@ -27,13 +27,13 @@ def send_data():
             print("Không có dữ liệu trong database.")
             return False
 
-        user_id, soil_moisture, temperature, humidity_air, created_time = row
+        user_id, soil_moisture, temperature, humidity, created_time = row
 
         params = {
             "api_key": WRITE_API_KEY,
             "field1": soil_moisture,
             "field2": temperature,
-            "field3": humidity_air,
+            "field3": humidity,
             "field4": user_id,  # Lưu user_id vào field4
             "created_at": created_time.strftime("%Y-%m-%dT%H:%M:%SZ")
         }
@@ -84,7 +84,7 @@ def get_data():
         labels = []
         soil_moisture = []
         temperature = []
-        humidity_air = []
+        humidity = []
 
         for feed in data['feeds']:
             # Chỉ lấy dữ liệu của user hiện tại
@@ -97,13 +97,13 @@ def get_data():
 
             soil_moisture.append(float(feed['field1']) if feed['field1'] else None)
             temperature.append(float(feed['field2']) if feed['field2'] else None)
-            humidity_air.append(float(feed['field3']) if feed['field3'] else None)
+            humidity.append(float(feed['field3']) if feed['field3'] else None)
 
         return jsonify({
             "labels": labels,
             "soil_moisture": soil_moisture,
             "temperature": temperature,
-            "humidity_air": humidity_air
+            "humidity": humidity
         })
 
     except Exception as e:
