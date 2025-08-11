@@ -23,8 +23,6 @@ def receive_temperature_and_humidity():
         humidity = float(data.get("humidity"))
         soil_moisture = float(data.get("soil_moisture"))
 
-        date = data.get("timestamp")
-
         if device_id is None or temperature == 0.0 or humidity == 0.0:
             return jsonify({'status': 'fail', 'message': 'device_id is required'}), 400
 
@@ -52,7 +50,7 @@ def receive_temperature_and_humidity():
                 print(email)
                 send_mail.send_urgent_mail_for_temp_and_humid(temperature, humidity, email)
 
-        cloud.send_data(user_id, soil_moisture, temperature, humidity, date)
+        cloud.send_data(user_id, soil_moisture, temperature, humidity)
         return jsonify({'status': 'success', 'message': 'Data stored'}), 200
 
     except Exception as e:

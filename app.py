@@ -50,8 +50,5 @@ def get_data():
     return cl.get_data()
 
 if __name__ == "__main__":
-    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":  # Chỉ chạy ở process chính
-        thread = threading.Thread(target=cl.send_data_loop, daemon=True)
-        thread.start()
     app.run(host="0.0.0.0", port=5000, debug=True)
 

@@ -10,7 +10,7 @@ WRITE_API_KEY = "5YDUCIRMRS3IAAT4"
 FIELD_NUM = 2
 NUM_RESULTS = 50 
 
-def send_data(user_id, soil_moisture, temperature, humidity, created_time):
+def send_data(user_id, soil_moisture, temperature, humidity):
     try:
         cur = mysql.connection.cursor()
 
@@ -35,7 +35,7 @@ def send_data(user_id, soil_moisture, temperature, humidity, created_time):
             "field2": temperature,
             "field3": humidity,
             "field4": user_id,  # Lưu user_id vào field4
-            "created_at": created_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+            # "created_at": created_time.strftime("%Y-%m-%dT%H:%M:%SZ")
         }
 
         url = "https://api.thingspeak.com/update"
@@ -111,7 +111,7 @@ def get_data():
         return jsonify({"error": str(e)}), 500
 
 
-def send_data_loop():
-    while True:
-        send_data()
-        time.sleep(60)
+# def send_data_loop():
+#     while True:
+#         send_data()
+#         time.sleep(60)
