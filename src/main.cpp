@@ -80,7 +80,7 @@ void runAutoModeApp(){
     soilSensor->readSensorData();
     if (sendSensorDataHandler != nullptr){
 
-      sendSensorDataHandler->send(dataUrl);
+      // sendSensorDataHandler->send(dataUrl);
       // sendSensorDataHandler->sendToThingSpeak();
     } 
     
