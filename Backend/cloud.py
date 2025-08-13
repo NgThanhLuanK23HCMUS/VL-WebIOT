@@ -140,6 +140,7 @@ def get_time():
             return jsonify({"error": "No user_id found in database"}), 404
 
         user_id = str(row[0])
+
         url = f"https://api.thingspeak.com/channels/{CHANNEL_ID1}/feeds.json?results={NUM_RESULTS}"
         if READ_API_KEY:
             url += f"&api_key={READ_API_KEY}"
@@ -150,14 +151,16 @@ def get_time():
 
         times = []
         for feed in data.get('feeds', []):
-            if str(feed.get('field2')) != str(user_id):
+            if str(feed.get('field2')) != user_id:
                 continue
 
             created_at = feed.get('created_at')
             if created_at:
                 try:
-                    time_str = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ").strftime("%H:%M %d/%m/%Y")
-                except:
+                    dt_utc = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ")
+                    dt_vn = dt_utc + timedelta(hours=7)
+                    time_str = dt_vn.strftime("%H:%M %d/%m/%Y")
+                except Exception:
                     time_str = created_at
                 times.append(time_str)
 
