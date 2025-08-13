@@ -97,9 +97,11 @@ def get_data():
 
 
 def send_time(user_id):
-    now_vn = datetime.now(timezone.utc) + timedelta(hours=7)
-    
-    formatted_time = now_vn.strftime('%Y-%m-%dT%H:%M:%S+0700')
+    vn_tz = timezone(timedelta(hours=7))
+
+    now_vn = datetime.now(vn_tz)
+
+    formatted_time = now_vn.strftime('%Y-%m-%dT%H:%M:%S%z')
 
     url = "https://api.thingspeak.com/update"
     payload = {
