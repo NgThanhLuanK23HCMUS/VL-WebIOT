@@ -1,43 +1,27 @@
 from flask import jsonify
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from Backend.db import mysql
 import time
 
 CHANNEL_ID = "3027556" 
+CHANNEL_ID1 = "3032225"
 WRITE_API_KEY = "NX3PTBRLDUG0YVQS" # access time channel
 READ_API_KEY = "JBI37JNC3B9ETYIK"
 READ_API_KEY1 = "MOK8E9XJGEBTER1I"  # other data channel temp, humid and moisture
 WRITE_API_KEY1 = "5YDUCIRMRS3IAAT4"
 FIELD_NUM = 2
-NUM_RESULTS = 50 
+NUM_RESULTS = 10 
 
 def send_data(user_id, soil_moisture, temperature, humidity):
     try:
-        cur = mysql.connection.cursor()
-
-        cur.execute("""
-            SELECT device_id, soil_moisture, temperature, humidity, timestamp
-            FROM sensor_data
-            ORDER BY timestamp DESC
-            LIMIT 1
-        """)
-        row = cur.fetchone()
-        cur.close()
-
-        if not row:
-            print("Không có dữ liệu trong database.")
-            return False
-
-        user_id, soil_moisture, temperature, humidity = row
 
         params = {
             "api_key": WRITE_API_KEY1,
             "field1": soil_moisture,
             "field2": temperature,
             "field3": humidity,
-            "field4": user_id,  # Lưu user_id vào field4
-            # "created_at": created_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+            "field4": user_id
         }
 
         url = "https://api.thingspeak.com/update"
@@ -51,7 +35,7 @@ def send_data(user_id, soil_moisture, temperature, humidity):
             return False
 
     except Exception as e:
-        print(f"Lỗi khi truy vấn hoặc gửi dữ liệu: {e}")
+        print(f"Lỗi khi gửi thông số: {e}")
         return False
 
 
@@ -75,7 +59,6 @@ def get_data():
         current_user_id = str(row[0])
         print(f"Đang lấy dữ liệu cho user_id: {current_user_id}")
 
-        # Lấy dữ liệu từ ThingSpeak
         url = f"https://api.thingspeak.com/channels/{CHANNEL_ID}/feeds.json?results={NUM_RESULTS}"
         if READ_API_KEY1:
             url += f"&api_key={READ_API_KEY1}"
@@ -93,8 +76,9 @@ def get_data():
             if str(feed.get('field4')) != current_user_id:
                 continue
 
-            # Định dạng thời gian
-            time_str = datetime.strptime(feed['created_at'], "%Y-%m-%dT%H:%M:%SZ").strftime("%H:%M %d/%m")
+            dt_utc = datetime.strptime(feed['created_at'], "%Y-%m-%dT%H:%M:%SZ")
+            dt_vn = dt_utc + timedelta(hours=7) 
+            time_str = dt_vn.strftime("%H:%M %d/%m")
             labels.append(time_str)
 
             soil_moisture.append(float(feed['field1']) if feed['field1'] else None)
@@ -109,20 +93,16 @@ def get_data():
         })
 
     except Exception as e:
-        print(f"Lỗi khi lấy dữ liệu: {e}")
+        print(f"Lỗi khi lấy dữ liệu thông số: {e}")
         return jsonify({"error": str(e)}), 500
 
 
-# def send_data_loop():
-#     while True:
-#         send_data()
-#         time.sleep(60)
 def send_time(user_id):
-    # Lấy giờ UTC rồi cộng thêm 7 tiếng để ra giờ Việt Nam
-    now_vn = datetime.utcnow() + timedelta(hours=7)
-    
-    # Format thành dạng ISO 8601 + offset +0700
-    formatted_time = now_vn.strftime('%Y-%m-%dT%H:%M:%S+0700')
+    vn_tz = timezone(timedelta(hours=7))
+
+    now_vn = datetime.now(vn_tz)
+
+    formatted_time = now_vn.strftime('%Y-%m-%dT%H:%M:%S%z')
 
     url = "https://api.thingspeak.com/update"
     payload = {
@@ -161,7 +141,8 @@ def get_time():
             return jsonify({"error": "No user_id found in database"}), 404
 
         user_id = str(row[0])
-        url = f"https://api.thingspeak.com/channels/{CHANNEL_ID}/feeds.json?results={NUM_RESULTS}"
+
+        url = f"https://api.thingspeak.com/channels/{CHANNEL_ID1}/feeds.json?results={NUM_RESULTS}"
         if READ_API_KEY:
             url += f"&api_key={READ_API_KEY}"
 
@@ -171,14 +152,16 @@ def get_time():
 
         times = []
         for feed in data.get('feeds', []):
-            if str(feed.get('field2')) != str(user_id):
+            if str(feed.get('field2')) != user_id:
                 continue
 
             created_at = feed.get('created_at')
             if created_at:
                 try:
-                    time_str = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ").strftime("%H:%M %d/%m/%Y")
-                except:
+                    dt_utc = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ")
+                    dt_vn = dt_utc + timedelta(hours=7)
+                    time_str = dt_vn.strftime("%H:%M %d/%m/%Y")
+                except Exception:
                     time_str = created_at
                 times.append(time_str)
 
