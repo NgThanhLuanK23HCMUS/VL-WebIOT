@@ -11,26 +11,10 @@ READ_API_KEY = "JBI37JNC3B9ETYIK"
 READ_API_KEY1 = "MOK8E9XJGEBTER1I"  # other data channel temp, humid and moisture
 WRITE_API_KEY1 = "5YDUCIRMRS3IAAT4"
 FIELD_NUM = 2
-NUM_RESULTS = 50 
+NUM_RESULTS = 10 
 
 def send_data(user_id, soil_moisture, temperature, humidity):
     try:
-        cur = mysql.connection.cursor()
-
-        cur.execute("""
-            SELECT device_id, soil_moisture, temperature, humidity, timestamp
-            FROM sensor_data
-            ORDER BY timestamp DESC
-            LIMIT 1
-        """)
-        row = cur.fetchone()
-        cur.close()
-
-        if not row:
-            print("Không có dữ liệu trong database.")
-            return False
-
-        user_id, soil_moisture, temperature, humidity = row
 
         params = {
             "api_key": WRITE_API_KEY1,
