@@ -5,6 +5,7 @@ from Backend.db import mysql
 import time
 
 CHANNEL_ID = "3027556" 
+CHANNEL_ID1 = "3032225"
 WRITE_API_KEY = "NX3PTBRLDUG0YVQS" # access time channel
 READ_API_KEY = "JBI37JNC3B9ETYIK"
 READ_API_KEY1 = "MOK8E9XJGEBTER1I"  # other data channel temp, humid and moisture
@@ -161,7 +162,7 @@ def get_time():
             return jsonify({"error": "No user_id found in database"}), 404
 
         user_id = str(row[0])
-        url = f"https://api.thingspeak.com/channels/{CHANNEL_ID}/feeds.json?results={NUM_RESULTS}"
+        url = f"https://api.thingspeak.com/channels/{CHANNEL_ID1}/feeds.json?results={NUM_RESULTS}"
         if READ_API_KEY:
             url += f"&api_key={READ_API_KEY}"
 
