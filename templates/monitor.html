@@ -10,9 +10,10 @@
       integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/setting.css') }}">
     <style>
       body {
-        background-image: url("{{ url_for('static', filename='img/house_and_flower.jpg') }}");
+        background-image: url("{{ url_for('static', filename='img/dark_bg.jpg') }}");
 
         background-size: cover;
         background-repeat: no-repeat;
@@ -69,7 +70,7 @@
                 >Analytics</a
               >
             </li>
-            
+            {% include "config.html" %}
           </ul>
         </div>
       </div>
@@ -205,7 +206,7 @@
 
 
     </div>
-    {% include "config.html" %}
 
+        <script src="../static/js/handle_config_page.js"></script>
   </body>
 </html>

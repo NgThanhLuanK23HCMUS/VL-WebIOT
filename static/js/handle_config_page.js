@@ -44,7 +44,7 @@ document.getElementById("saveSettings").addEventListener("click", () => {
   const air = document.getElementById("airHumidity").value;
 
   // Gửi dữ liệu lên server (ví dụ dùng x-www-form-urlencoded)
-  fetch("http://192.168.1.8/api/save/threshold", {
+  fetch("http://192.168.1.216/api/save/threshold", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",

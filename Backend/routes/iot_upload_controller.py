@@ -49,7 +49,8 @@ def receive_temperature_and_humidity():
                 email = res[0]
                 print(email)
                 send_mail.send_urgent_mail_for_temp_and_humid(temperature, humidity, email)
-
+                send_sms.send_urgent_message(temperature,humidity)
+                
         cloud.send_data(user_id, soil_moisture, temperature, humidity)
         return jsonify({'status': 'success', 'message': 'Data stored'}), 200
 

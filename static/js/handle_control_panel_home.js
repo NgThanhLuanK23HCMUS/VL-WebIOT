@@ -32,7 +32,7 @@ function sendControlMode(mode, user_id) {
   const urlServer = `/api/update/control/mode?mode=${mode}&user_id=${encodeURIComponent(
     user_id
   )}`;
-  const urlESP32 = "http://192.168.1.8/api/control_mode";
+  const urlESP32 = "http://192.168.1.216/api/control_mode";
 
   fetch(urlServer, { method: "GET" })
     .then((res) => {
@@ -58,7 +58,7 @@ function sendControlMode(mode, user_id) {
 // Gửi điều khiển thiết bị + cập nhật server
 function sendDeviceControl(endpoint, state) {
   // Gửi ESP32
-  fetch(`http://192.168.1.8/api/${endpoint}`, {
+  fetch(`http://192.168.1.216/api/${endpoint}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",

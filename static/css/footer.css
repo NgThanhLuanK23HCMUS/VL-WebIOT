@@ -1,0 +1,19 @@
+.footer{
+    padding: 5px;
+    color: white;
+}
+
+.footer-box{
+    list-style: none;
+    margin-top: 5px;
+}
+
+.footer-infor{
+    margin: auto;
+    font-size: 25px;
+    display: flex;
+}
+
+.footer-infor i{
+    margin-right: 5px;
+}
