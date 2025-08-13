@@ -76,8 +76,9 @@ def get_data():
             if str(feed.get('field4')) != current_user_id:
                 continue
 
-            # Định dạng thời gian
-            time_str = datetime.strptime(feed['created_at'], "%Y-%m-%dT%H:%M:%SZ").strftime("%H:%M %d/%m")
+            dt_utc = datetime.strptime(feed['created_at'], "%Y-%m-%dT%H:%M:%SZ")
+            dt_vn = dt_utc + timedelta(hours=7) 
+            time_str = dt_vn.strftime("%H:%M %d/%m")
             labels.append(time_str)
 
             soil_moisture.append(float(feed['field1']) if feed['field1'] else None)
