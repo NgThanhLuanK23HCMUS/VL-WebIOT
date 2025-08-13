@@ -1,6 +1,6 @@
 from flask import jsonify
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from Backend.db import mysql
 import time
 
@@ -37,8 +37,7 @@ def send_data(user_id, soil_moisture, temperature, humidity):
             "field1": soil_moisture,
             "field2": temperature,
             "field3": humidity,
-            "field4": user_id,  # Lưu user_id vào field4
-            # "created_at": created_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+            "field4": user_id
         }
 
         url = "https://api.thingspeak.com/update"
@@ -52,7 +51,7 @@ def send_data(user_id, soil_moisture, temperature, humidity):
             return False
 
     except Exception as e:
-        print(f"Lỗi khi truy vấn hoặc gửi dữ liệu: {e}")
+        print(f"Lỗi khi gửi thông số: {e}")
         return False
 
 
@@ -76,7 +75,6 @@ def get_data():
         current_user_id = str(row[0])
         print(f"Đang lấy dữ liệu cho user_id: {current_user_id}")
 
-        # Lấy dữ liệu từ ThingSpeak
         url = f"https://api.thingspeak.com/channels/{CHANNEL_ID}/feeds.json?results={NUM_RESULTS}"
         if READ_API_KEY1:
             url += f"&api_key={READ_API_KEY1}"
@@ -110,19 +108,13 @@ def get_data():
         })
 
     except Exception as e:
-        print(f"Lỗi khi lấy dữ liệu: {e}")
+        print(f"Lỗi khi lấy dữ liệu thông số: {e}")
         return jsonify({"error": str(e)}), 500
 
 
-# def send_data_loop():
-#     while True:
-#         send_data()
-#         time.sleep(60)
 def send_time(user_id):
-    # Lấy giờ UTC rồi cộng thêm 7 tiếng để ra giờ Việt Nam
-    now_vn = datetime.utcnow() + timedelta(hours=7)
+    now_vn = datetime.now(timezone.utc) + timedelta(hours=7)
     
-    # Format thành dạng ISO 8601 + offset +0700
     formatted_time = now_vn.strftime('%Y-%m-%dT%H:%M:%S+0700')
 
     url = "https://api.thingspeak.com/update"
