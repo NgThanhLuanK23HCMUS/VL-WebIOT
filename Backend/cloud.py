@@ -1,8 +1,7 @@
 from flask import jsonify
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 from Backend.db import mysql
-from zoneinfo import ZoneInfo
 import time
 
 CHANNEL_ID = "3027556" 
@@ -119,10 +118,11 @@ def get_data():
 #         send_data()
 #         time.sleep(60)
 def send_time(user_id):
-    vn_tz = ZoneInfo("Asia/Ho_Chi_Minh")
-    now_vn = datetime.now(vn_tz)
-
-    formatted_time = now_vn.strftime('%Y-%m-%dT%H:%M:%S%z')
+    # Lấy giờ UTC rồi cộng thêm 7 tiếng để ra giờ Việt Nam
+    now_vn = datetime.utcnow() + timedelta(hours=7)
+    
+    # Format thành dạng ISO 8601 + offset +0700
+    formatted_time = now_vn.strftime('%Y-%m-%dT%H:%M:%S+0700')
 
     url = "https://api.thingspeak.com/update"
     payload = {
@@ -131,15 +131,17 @@ def send_time(user_id):
         'field2': user_id
     }
 
-    response = requests.post(url, data=payload)
-
-    if response.status_code == 200:
-        if response.text == '0':
-            print("Không có trường dữ liệu hợp lệ được cập nhật")
+    try:
+        response = requests.post(url, data=payload)
+        if response.status_code == 200:
+            if response.text == '0':
+                print("Không có trường dữ liệu hợp lệ được cập nhật")
+            else:
+                print(f"Gửi thành công, entry ID: {response.text}")
         else:
-            print(f"Gửi thành công, entry ID: {response.text}")
-    else:
-        print(f"Lỗi khi gửi dữ liệu: {response.status_code}")
+            print(f"Lỗi khi gửi dữ liệu: {response.status_code}")
+    except Exception as e:
+        print(f"Lỗi khi gửi dữ liệu: {e}")
 
 
 def get_time():
