@@ -8,6 +8,8 @@ void SendSensorDataHandler::send(const char *url)
 {
     if (WiFi.status() == WL_CONNECTED) {
         HTTPClient http;
+        http.setTimeout(10000); // 10 giây
+
         http.begin(url);
         http.addHeader("Content-Type", "application/json");
 
@@ -23,16 +25,16 @@ void SendSensorDataHandler::send(const char *url)
         json += "\"soil_moisture\":" + String(soilMoisture, 2) ;
         json += "}";
 
-        Serial.println("📦 JSON gửi đi:");
+        Serial.println("JSON gửi đi:");
         Serial.println(json);
 
         int responseCode = http.POST(json);
-        Serial.printf("📡 Server trả lời: %d\n", responseCode);
+        Serial.printf("Server trả lời: %d\n", responseCode);
 
         if (responseCode > 0) {
-            Serial.println("📬 Response: " + http.getString());
+            Serial.println("Response: " + http.getString());
         } else {
-            Serial.printf("❌ Lỗi gửi dữ liệu: %s\n", http.errorToString(responseCode).c_str());
+            Serial.printf("Lỗi gửi dữ liệu: %s\n", http.errorToString(responseCode).c_str());
         }
 
         http.end();
@@ -46,16 +48,22 @@ void SendSensorDataHandler::sendShockData(const char *url)
     if (WiFi.status() == WL_CONNECTED) {
         HTTPClient http;
 
-        String fullUrl = String(url) + "?data=1";
+        http.begin(url);
+        http.addHeader("Content-Type", "application/json");
 
-        http.begin(fullUrl);
+        String json = "{";
+        json += "\"user_id\":\"" + device->getUserId() + "\",";
+        json += "\"data\":\"" + String(shockSensor->getIsShock()) + "\"";
+        json += "}";
+        
+        Serial.println("JSON gửi đi:");
+        Serial.println(json);
 
-        int responseCode = http.GET();  
-
+        int responseCode = http.POST(json);  
         if (responseCode > 0) {
-            Serial.println("📬 Response: " + http.getString());
+            Serial.println("Response: " + http.getString());
         } else {
-            Serial.printf("❌ Lỗi gửi dữ liệu: %s\n", http.errorToString(responseCode).c_str());
+            Serial.printf("Lỗi gửi dữ liệu: %s\n", http.errorToString(responseCode).c_str());
         }
 
         http.end();

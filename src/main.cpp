@@ -14,9 +14,9 @@
 Preferences preferences;
 WebServer* server = new WebServer(80);
 unsigned long lastReadTime = 0;
-const unsigned long readInterval = 20000;  // 60,000 ms = 1 phút
+const unsigned long readInterval = 20000;  
 
-const unsigned long pumpInterval = 20000;
+const unsigned long pumpInterval = 10000;
 extern unsigned long lastPumpTime ;
 unsigned long lastPumpTime = 0;
 
@@ -75,35 +75,46 @@ void runAutoModeApp(){
   unsigned long currentTime = millis();
   
   if (currentTime - lastReadTime >= readInterval) {
-    lastReadTime = currentTime;
     tempAndHumSensor->readSensorData();
     soilSensor->readSensorData();
+    lastReadTime = currentTime;
+    // if (sensor->getTemperature() > sensor->getTemperatureThreshold() || 
+    // sensor->getHumidity() > sensor->getHumidityThreshold() 
+    // // || sensor->getSoilMoisture() < sensor->getSoilThreshold()) {
+    // )
+    // {
+    //   sendSensorDataHandler->send(urgentDataUrl);
+    //   if(!relay->getIsOn()) {
+    //     relay->turnOn();
+    //     relay->setIsOn(true);
+    //     lastPumpTime = millis();  
+    //   }
 
-    if (sensor->getTemperature() > sensor->getTemperatureThreshold() || 
-        sensor->getHumidity() > sensor->getHumidityThreshold() 
-        // || sensor->getSoilMoisture() < sensor->getSoilThreshold()) {
-    )
-    {
-      sendSensorDataHandler->send(dataUrl);
-      if(!relay->getIsOn()) {
-        relay->turnOn();
-        relay->setIsOn(true);
-        lastPumpTime = millis();  
-      }
-
-    } 
+    // }
 
     
+    // sendSensorDataHandler->send(dataUrl);
+
+
+
+
+    shockSensor->readSensorData();
+    Serial.println(shockSensor->getIsShock());
+    if(!shockSensor->getIsShock()){
+      sendSensorDataHandler->sendShockData(shockDataUrl);
+    }
+      
   }
+
+
+
+
   if(relay->getIsOn() && (millis() - lastPumpTime >= pumpInterval)) {
     relay->turnOff();
     relay->setIsOn(false);
   }
   
-  shockSensor->readSensorData();
-  if(!shockSensor->getIsShock()){
-    // sendSensorDataHandler->sendShockData(shockDataUrl);
-  }
+  
 
 }
 
