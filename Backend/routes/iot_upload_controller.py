@@ -9,22 +9,22 @@ user_id_global = None
 @upload_bp.route("/api/sensors/data", methods=["POST"])
 def receive_temperature_and_humidity():
     cursor = None
+    global user_id_global
+
     try:
         data = request.get_json(force=True)
-        
+
         device_id = data.get("device_id")
         user_id = data.get("user_id")
-        if user_id:
-            global user_id_global
+        if  user_id_global is  None and user_id:
             user_id_global = user_id
 
-        print(user_id_global)
         temperature = float(data.get("temperature"))
         humidity = float(data.get("humidity"))
         soil_moisture = float(data.get("soil_moisture"))
 
         if device_id is None or temperature == 0.0 or humidity == 0.0:
-            return jsonify({'status': 'fail', 'message': 'device_id is required'}), 400
+            return jsonify({'status': 'fail', 'message': 'Invalid data'}), 400
 
         cursor = db.mysql.connection.cursor()
 
@@ -39,17 +39,7 @@ def receive_temperature_and_humidity():
         """, (device_id, temperature, humidity, soil_moisture))
         db.mysql.connection.commit()
 
-        
-
-
-        if user_id and (temperature > 20 or humidity > 80):
-            cursor.execute("SELECT email FROM users WHERE id = %s", (user_id,))
-            res = cursor.fetchone()
-            if res:
-                email = res[0]
-                print(email)
-                send_mail.send_urgent_mail_for_temp_and_humid(temperature, humidity, email)
-                send_sms.send_urgent_message(temperature,humidity)
+    
                 
         cloud.send_data(user_id, soil_moisture, temperature, humidity)
         return jsonify({'status': 'success', 'message': 'Data stored'}), 200
@@ -61,18 +51,77 @@ def receive_temperature_and_humidity():
             cursor.close()
 
 
+@upload_bp.route("/api/urgent/sensors/data", methods=["POST"])
+def receive_urgent_temperature_and_humidity():
+    cursor = None
+    global user_id_global
+    try:
+        data = request.get_json(force=True)
+        
+        device_id = data.get("device_id")
+        user_id = data.get("user_id")
 
-from flask import jsonify
+        if user_id_global is None and user_id:
+            user_id_global = user_id
 
-@upload_bp.route("/api/shock/data", methods=["GET"])
+        temperature = float(data.get("temperature"))
+        humidity = float(data.get("humidity"))
+        soil_moisture = float(data.get("soil_moisture"))
+
+        if device_id is None or temperature == 0.0 or humidity == 0.0:
+            return jsonify({'status': 'error', 'message': 'Invalid data'}), 400
+
+        cursor = db.mysql.connection.cursor()
+
+        cursor.execute("SELECT COUNT(*) FROM devices WHERE id = %s", (device_id,))
+        (count,) = cursor.fetchone()
+        if count == 0:
+            return jsonify({'status': 'fail', 'message': f'Device ID {device_id} not registered'}), 400
+        
+
+
+        if user_id :
+            cursor.execute("SELECT email FROM users WHERE id = %s", (user_id,))
+            res = cursor.fetchone()
+            if res:
+                email = res[0]
+                send_mail.send_urgent_mail_for_sensor_data(temperature, humidity, soil_moisture, email)
+                send_sms.send_urgent_message(temperature,humidity, soil_moisture)
+        return jsonify({'status': 'success', 'message': 'Send successfully'}), 200
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+
+@upload_bp.route("/api/urgent/shock/data", methods=["POST"])
 def receive_shock_data():
-    data = request.args.get("data")
-    
-    if data == "1":
-        send_mail.send_urgent_mail_for_shock_data()
-        return jsonify({"status": "ok", "message": "Mail sent"}), 200
-    else:
-        return jsonify({"status": "ignored", "message": "No action taken"}), 200
+    cursor = None
+    global user_id_global
+    try:
+        data = request.get_json(force=True)
+        
+        user_id = data.get("user_id")
+        shock_data = data.get("data")
+        if user_id_global is None and user_id:
+            user_id_global = user_id
+
+        if user_id :
+            cursor = db.mysql.connection.cursor()
+            cursor.execute("SELECT email FROM users WHERE id = %s", (user_id,))
+            res = cursor.fetchone()
+            if res:
+                email = res[0]
+                if shock_data == "0" or shock_data == "false":
+                    send_mail.send_urgent_mail_for_shock_data(email)
+        return jsonify({'status': 'success', 'message': 'Send successfully'}), 200
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
 
 
 @upload_bp.route("/api/devices/register", methods=["POST"])

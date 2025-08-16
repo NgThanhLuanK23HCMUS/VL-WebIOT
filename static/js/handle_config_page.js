@@ -42,9 +42,9 @@ document.getElementById("saveSettings").addEventListener("click", () => {
   const temp = document.getElementById("temp").value;
   const soil = document.getElementById("soilHumidity").value;
   const air = document.getElementById("airHumidity").value;
-
+  console.log("haha")
   // Gửi dữ liệu lên server (ví dụ dùng x-www-form-urlencoded)
-  fetch("http://192.168.1.216/api/save/threshold", {
+  fetch("http://192.168.1.2/api/save/threshold", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -57,7 +57,6 @@ document.getElementById("saveSettings").addEventListener("click", () => {
   })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
       modal.style.display = "none";
     })
     .catch((err) => {

@@ -1,6 +1,6 @@
 import requests
 
-def send_urgent_message(temperature, humidity):
+def send_urgent_message(temperature, humidity, soil_moisture):
     private_key = "75j7WTjmbodH3GfZogf6"
 
     # Message details
@@ -9,7 +9,8 @@ def send_urgent_message(temperature, humidity):
         "t": "Thông báo từ ESP32",      # Title
         "m": f"""Cảnh báo từ ESP32:
             Nhiệt độ: {temperature}°C
-            Độ ẩm: {humidity}%""",  # Message
+            Độ ẩm: {humidity}%
+            Độ ẩm đất: {soil_moisture}%""",  # Message
         "d": "",                        # Leave empty to send to all devices
         "sound": "1",                   # Optional: sound on notification
         "vibration": "1",               # Optional: enable vibration
