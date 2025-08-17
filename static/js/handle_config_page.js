@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.style.display = "none";
 
     // Gửi dữ liệu lên server 
-    fetch("http://192.168.1.6/api/save/threshold", {
+    fetch("http://192.168.1.9/api/save/threshold", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

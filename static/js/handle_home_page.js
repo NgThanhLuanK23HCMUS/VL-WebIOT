@@ -12,7 +12,7 @@ export function sendUserIdIfNeeded() {
         console.log(user_id);
         console.log(isSend);
         if (user_id) {
-          fetch("http://192.168.1.6/api/user/send_id_to_device", {
+          fetch("http://192.168.1.9/api/user/send_id_to_device", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `user_id=${user_id}`,
