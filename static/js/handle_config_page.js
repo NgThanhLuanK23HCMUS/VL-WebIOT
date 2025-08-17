@@ -62,10 +62,8 @@ document.getElementById("saveSettings").addEventListener("click", () => {
       console.error(err);
   });
 
-
-  console.log("haha")
   // Gửi dữ liệu lên server (ví dụ dùng x-www-form-urlencoded)
-  fetch("http://192.168.1.2/api/save/threshold", {
+  fetch("http://192.168.1.7/api/save/threshold", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
