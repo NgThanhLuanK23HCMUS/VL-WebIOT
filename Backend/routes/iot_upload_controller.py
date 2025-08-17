@@ -5,6 +5,13 @@ from . import send_mail,send_sms
 upload_bp = Blueprint('upload', __name__)
 
 user_id_global = None
+private_key_global = ""
+
+@upload_bp.route("/api/user/private_key",methods=["POST"])
+def receive_private_key():
+    data = request.get_json(force=True)
+    
+    private_key_global = data.get("private_key")
 
 @upload_bp.route("/api/sensors/data", methods=["POST"])
 def receive_temperature_and_humidity():
@@ -86,7 +93,7 @@ def receive_urgent_temperature_and_humidity():
             if res:
                 email = res[0]
                 send_mail.send_urgent_mail_for_sensor_data(temperature, humidity, soil_moisture, email)
-                send_sms.send_urgent_message(temperature,humidity, soil_moisture)
+                send_sms.send_urgent_message(private_key_global,temperature,humidity, soil_moisture)
         return jsonify({'status': 'success', 'message': 'Send successfully'}), 200
 
     except Exception as e:

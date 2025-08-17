@@ -29,6 +29,7 @@ openConfigBtn.addEventListener("click", () => {
   document.getElementById("temp").value = "";
   document.getElementById("soilHumidity").value = "";
   document.getElementById("airHumidity").value = "";
+  document.getElementById("privateKey").value = "";
 });
 
 // Đóng modal khi nhấn nút đóng
@@ -42,6 +43,26 @@ document.getElementById("saveSettings").addEventListener("click", () => {
   const temp = document.getElementById("temp").value;
   const soil = document.getElementById("soilHumidity").value;
   const air = document.getElementById("airHumidity").value;
+  const privateKey = document.getElementById("privateKey").value;
+
+    fetch("/api/user/private_key", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      private_key: privateKey,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      modal.style.display = "none";
+    })
+    .catch((err) => {
+      console.error(err);
+  });
+
+
   console.log("haha")
   // Gửi dữ liệu lên server (ví dụ dùng x-www-form-urlencoded)
   fetch("http://192.168.1.2/api/save/threshold", {

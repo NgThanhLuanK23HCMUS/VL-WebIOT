@@ -1,7 +1,7 @@
 import requests
 
-def send_urgent_message(temperature, humidity, soil_moisture):
-    private_key = "75j7WTjmbodH3GfZogf6"
+def send_urgent_message(private_key,temperature, humidity, soil_moisture):
+    private_key = private_key
 
     # Message details
     payload = {
