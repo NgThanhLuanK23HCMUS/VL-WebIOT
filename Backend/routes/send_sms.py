@@ -1,6 +1,10 @@
 import requests
 
 def send_urgent_message(private_key,temperature, humidity, soil_moisture):
+    if(private_key == ""):
+        print("No private key!")
+        return
+        
     private_key = private_key
 
     # Message details

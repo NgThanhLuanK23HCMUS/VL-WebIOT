@@ -5,32 +5,42 @@
 
     <div id="gearMenu">
       <button id="openConfig">Nhập thông số</button>
+      <button id="openConfig2">Nhập private key</button>
       <button id="logoutBtn">Đăng xuất</button>
     </div>
 
     <div id="settingsModal" class="modal">
-    
       <div class="modal-content">
-      <span class="close" id="closeSettings">&times;</span>
-      <h3>Nhập thông số</h3>
-      <label for="temp">Nhiệt độ (°C):</label>
-      <input type="number" id="temp" placeholder="Nhập nhiệt độ" />
-      <label for="soilHumidity">Độ ẩm đất (%):</label>
-      <input type="number" id="soilHumidity" placeholder="Nhập độ ẩm đất" />
-      <label for="airHumidity">Độ ẩm môi trường (%):</label>
-      <input
-        type="number"
-        id="airHumidity"
-        placeholder="Nhập độ ẩm môi trường"
-      />
-      <label for="airHumidity">PushSafer Private key:</label>
-      <input
-        type="text"
-        id="privateKey"
-        placeholder="Nhập private key"
-      />
-      <button class="btn-save" id="saveSettings">Lưu</button>
+        <span class="close" id="closeSettings">&times;</span>
+        <h3>Nhập thông số</h3>
+        <label for="temp">Nhiệt độ (°C):</label>
+        <input type="number" id="temp" placeholder="Nhập nhiệt độ" />
+        <label for="soilHumidity">Độ ẩm đất (%):</label>
+        <input type="number" id="soilHumidity" placeholder="Nhập độ ẩm đất" />
+        <label for="airHumidity">Độ ẩm môi trường (%):</label>
+        <input
+          type="number"
+          id="airHumidity"
+          placeholder="Nhập độ ẩm môi trường"
+        />
+        <button class="btn-save" id="saveSettings">Lưu</button>
       </div>
     </div>
+
+
+    <div id="settingsModal2" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeSettings2">&times;</span>
+        <h3>Nhập private key</h3>
+        <label for="privateKey">PushSafer Private key:</label>
+          <input
+            type="text"
+            id="privateKey"
+            placeholder="Nhập private key"
+          />
+          <button class="btn-save" id="saveSettings2">Lưu</button>
+      </div>
+    </div>
+
   </li>
 
