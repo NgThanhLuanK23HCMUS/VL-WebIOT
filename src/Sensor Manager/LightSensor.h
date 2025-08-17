@@ -14,6 +14,8 @@ public:
     void begin() override;
 
     void readSensorData() override ;
+
+    
 };
 
 #endif

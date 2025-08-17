@@ -37,7 +37,7 @@ void TrafficLight::turnOffAll() {
     digitalWrite(yellowPin, LOW);
     digitalWrite(greenPin, LOW);
 }
-void TrafficLight::turnOnfAll() {
+void TrafficLight::turnOnAll() {
     digitalWrite(redPin, HIGH);
     digitalWrite(yellowPin, HIGH);
     digitalWrite(greenPin, HIGH);

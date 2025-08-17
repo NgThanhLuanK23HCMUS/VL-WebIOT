@@ -18,7 +18,7 @@ public:
     void turnYellow();
     void turnGreen();
     void turnOffAll();  // tắt tất cả
-    void turnOnfAll();  // tắt tất cả
+    void turnOnAll();  // tắt tất cả
     void setIsOpen(const bool& isOpen);
 
     bool getIsOpen();

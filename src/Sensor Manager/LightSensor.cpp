@@ -7,9 +7,6 @@ void LightSensor::begin()
 
 void LightSensor::readSensorData()
 {
-        // float analogValue = analogRead(pin);
-        // float lightPercent = map(analogValue, 0, 4095, 0, 100); // 0 là tối, 100 là sáng
-        // sensor->setLightLevel(analogValue);
 
         bool digitalValue = digitalRead(pin);
         trafficLight->setIsOpen(digitalValue);

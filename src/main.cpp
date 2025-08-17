@@ -69,7 +69,7 @@ void runAutoModeApp(){
 
   lightSensor->readSensorData();
   if(trafficLight->getIsOpen()) {
-    trafficLight->turnOnfAll();
+    trafficLight->turnOnAll();
   } else {
     trafficLight->turnOffAll();
   }
@@ -80,10 +80,7 @@ void runAutoModeApp(){
     soilSensor->readSensorData();
     lastReadTime = currentTime;
 
-    Serial.println(sensor->getTemperature());
-    Serial.println(sensor->getTemperatureThreshold());
-    Serial.println(sensor->getHumidity());
-    Serial.println(sensor->getHumidityThreshold());
+
 
 
 
@@ -151,7 +148,7 @@ void getCurrentState() {
 
 void runManualModeApp() {
   if (trafficLight->getIsOpen()) {
-    trafficLight->turnOnfAll();
+    trafficLight->turnOnAll();
   } else {
     trafficLight->turnOffAll();
   }
@@ -190,8 +187,6 @@ void runManualModeApp() {
 
 void loop() {
 
-  // shockSensor->readSensorData();  // Đọc dữ liệu cảm biến rung
-  // Serial.println(shockSensor->getIsShock());  // In ra trạng thái rung
   server->handleClient();  // Luôn xử lý request
   if(isFinishedConfigWifi){
     getCurrentState();  

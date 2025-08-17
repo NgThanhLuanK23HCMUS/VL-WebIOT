@@ -12,18 +12,16 @@ public:
         : SensorManager(sensor), pin(pin) {}
 
     void begin() override;
-    int getIsShock(){
-        return this->isShock;
-    }
 
-    void setIsShock(int isShock) {
-        this->isShock = isShock;
-    }
+    
+    int getIsShock();
+    void setIsShock(int isShock);
 
-    void readSensorData() override ;
     int readShockSensor() {
         return digitalRead(pin);
     }
+
+    void readSensorData() override ;
 };
 
 #endif
