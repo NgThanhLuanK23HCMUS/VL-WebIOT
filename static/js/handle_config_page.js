@@ -65,9 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (soil === "") soil = "null";
     if (air === "") air = "null";
 
-
     if (soil == "null") console.log("haha");
-
 
     const modal = document.getElementById("settingsModal");
     modal.style.display = "none";
@@ -98,6 +96,8 @@ document.addEventListener("DOMContentLoaded", () => {
 document.getElementById("saveSettings2").addEventListener("click", () => {
   const privateKey = document.getElementById("privateKey").value;
 
+  const modal = document.getElementById("settingsModal2");
+  modal.style.display = "none";
   fetch("/api/user/private_key", {
     method: "POST",
     headers: {
