@@ -93,7 +93,7 @@ void runAutoModeApp(){
     )
     {
       sendSensorDataHandler->send(mailSensorDataUrl);
-      // sendSensorDataHandler->sendSmsSensorData(smsSensorDataUrl);
+      sendSensorDataHandler->sendSmsSensorData(smsSensorDataUrl);
       if(!relay->getIsOn()) {
         relay->turnOn();
         relay->setIsOn(true);
@@ -107,7 +107,7 @@ void runAutoModeApp(){
 
     if(!shockSensor->getIsShock()) {
       sendSensorDataHandler->sendMailShockData(mailShockDataUrl);
-      // sendSensorDataHandler->sendSmsShockData(smsShockDataUrl);
+      sendSensorDataHandler->sendSmsShockData(smsShockDataUrl);
       shockSensor->setIsShock(1);
     }
       
