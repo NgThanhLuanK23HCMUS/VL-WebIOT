@@ -58,8 +58,8 @@ def receive_temperature_and_humidity():
             cursor.close()
 
 
-@upload_bp.route("/api/urgent/sensors/data", methods=["POST"])
-def receive_urgent_temperature_and_humidity():
+@upload_bp.route("/api/mail/sensors/data", methods=["POST"])
+def receive_mail_temperature_and_humidity():
     cursor = None
     global user_id_global
     try:
@@ -93,7 +93,6 @@ def receive_urgent_temperature_and_humidity():
             if res:
                 email = res[0]
                 send_mail.send_urgent_mail_for_sensor_data(temperature, humidity, soil_moisture, email)
-                send_sms.send_urgent_message(private_key_global,temperature,humidity, soil_moisture)
         return jsonify({'status': 'success', 'message': 'Send successfully'}), 200
 
     except Exception as e:
@@ -102,8 +101,8 @@ def receive_urgent_temperature_and_humidity():
         if cursor:
             cursor.close()
 
-@upload_bp.route("/api/urgent/shock/data", methods=["POST"])
-def receive_shock_data():
+@upload_bp.route("/api/mail/shock/data", methods=["POST"])
+def receive_mail_shock_data():
     cursor = None
     global user_id_global
     try:
@@ -130,6 +129,36 @@ def receive_shock_data():
         if cursor:
             cursor.close()
 
+@upload_bp.route("/api/sms/sensors/data", methods=["POST"])
+def receive_sms_sensor_data():
+    try:
+        data = request.get_json(force=True)
+        temperature = float(data.get("temperature"))
+        humidity = float(data.get("humidity"))
+        soil_moisture = float(data.get("soil_moisture"))
+
+        if private_key_global == "":
+            return jsonify({'status': 'error', 'message': 'Private key not set'}), 400
+        send_sms.send_urgent_sms_for_sensor_data(private_key_global, temperature, humidity, soil_moisture)
+        return jsonify({'status': 'success', 'message': 'Send sms successfully'}), 200
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@upload_bp.route("/api/sms/shock/data", methods=["POST"])
+def receive_sms_shock_data():
+    try:
+        data = request.get_json(force=True)
+        shock_data = data.get("data")
+
+        if private_key_global == "":
+            return jsonify({'status': 'error', 'message': 'Private key not set'}), 400
+
+        send_sms.send_urgent_sms_for_shock_data(private_key_global) 
+        return jsonify({'status': 'success', 'message': 'Send sms successfully'}), 200
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @upload_bp.route("/api/devices/register", methods=["POST"])
 def receive_information_of_device():

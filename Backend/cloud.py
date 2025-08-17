@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, session
 import requests
 from datetime import datetime, timedelta, timezone
 from Backend.db import mysql
@@ -43,12 +43,14 @@ def send_data(user_id, soil_moisture, temperature, humidity):
 def get_data():
     try:
         cur = mysql.connection.cursor()
+        user_id = session.get('user_id')    
         cur.execute("""
             SELECT device_id
-            FROM sensor_data
+            FROM user_devices
+            WHERE user_id = %s
             ORDER BY timestamp DESC
             LIMIT 1
-        """)
+        """, (user_id,))
         row = cur.fetchone()
         cur.close()
 
@@ -56,8 +58,8 @@ def get_data():
             print("Không tìm thấy user_id trong database.")
             return jsonify({"error": "No user_id found in database"}), 404
 
-        current_user_id = str(row[0])
-        print(f"Đang lấy dữ liệu cho user_id: {current_user_id}")
+        # current_user_id = str(row[0])
+        print(f"Đang lấy dữ liệu cho user_id: {user_id}")
 
         url = f"https://api.thingspeak.com/channels/{CHANNEL_ID}/feeds.json?results={NUM_RESULTS}"
         if READ_API_KEY1:
@@ -73,7 +75,7 @@ def get_data():
 
         for feed in data['feeds']:
             # Chỉ lấy dữ liệu của user hiện tại
-            if str(feed.get('field4')) != current_user_id:
+            if str(feed.get('field4')) != user_id:
                 continue
 
             dt_utc = datetime.strptime(feed['created_at'], "%Y-%m-%dT%H:%M:%SZ")
@@ -127,12 +129,14 @@ def send_time(user_id):
 def get_time():
     try:
         cur = mysql.connection.cursor()
+        user_id = session.get('user_id')    
         cur.execute("""
             SELECT device_id
-            FROM sensor_data
+            FROM user_devices
+            WHERE user_id = %s
             ORDER BY timestamp DESC
             LIMIT 1
-        """)
+        """, (user_id,))
         row = cur.fetchone()
         cur.close()
 
@@ -140,7 +144,6 @@ def get_time():
             print("Không tìm thấy user_id trong database.")
             return jsonify({"error": "No user_id found in database"}), 404
 
-        user_id = str(row[0])
 
         url = f"https://api.thingspeak.com/channels/{CHANNEL_ID1}/feeds.json?results={NUM_RESULTS}"
         if READ_API_KEY:

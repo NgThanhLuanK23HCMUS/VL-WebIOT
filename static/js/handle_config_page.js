@@ -12,7 +12,6 @@ const modal2 = document.getElementById("settingsModal2");
 const closeSettingsBtn = document.getElementById("closeSettings");
 const closeSettingsBtn2 = document.getElementById("closeSettings2");
 
-
 // Toggle popup menu khi nhấn bánh răng
 gearIcon.addEventListener("click", () => {
   if (gearMenu.style.display === "block") {
@@ -46,7 +45,6 @@ openConfigBtn2.addEventListener("click", () => {
   document.getElementById("privateKey").value = "";
 });
 
-
 // Đóng modal khi nhấn nút đóng
 closeSettingsBtn.addEventListener("click", () => {
   modal.style.display = "none";
@@ -57,37 +55,50 @@ closeSettingsBtn2.addEventListener("click", () => {
 });
 
 // Xử lý nút lưu trong modal
-document.getElementById("saveSettings").addEventListener("click", () => {
-  const temp = document.getElementById("temp").value;
-  const soil = document.getElementById("soilHumidity").value;
-  const air = document.getElementById("airHumidity").value;
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("saveSettings").addEventListener("click", () => {
+    let temp = document.getElementById("temp").value;
+    let soil = document.getElementById("soilHumidity").value;
+    let air = document.getElementById("airHumidity").value;
 
-  // Gửi dữ liệu lên server (ví dụ dùng x-www-form-urlencoded)
-  fetch("http://192.168.1.7/api/save/threshold", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: `temperature=${encodeURIComponent(
-      temp
-    )}&soilHumidity=${encodeURIComponent(
-      soil
-    )}&airHumidity=${encodeURIComponent(air)}`,
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      modal.style.display = "none";
+    if (temp === "") temp = "null";
+    if (soil === "") soil = "null";
+    if (air === "") air = "null";
+
+
+    if (soil == "null") console.log("haha");
+
+
+    const modal = document.getElementById("settingsModal");
+    modal.style.display = "none";
+
+    // Gửi dữ liệu lên server (ví dụ dùng x-www-form-urlencoded)
+    fetch("http://192.168.1.6/api/save/threshold", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `temperature=${encodeURIComponent(
+        temp
+      )}&soilHumidity=${encodeURIComponent(
+        soil
+      )}&airHumidity=${encodeURIComponent(air)}`,
     })
-    .catch((err) => {
-      console.error(err);
-    });
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Server trả về:", data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  });
 });
 
 // Xử lý nút lưu trong modal 2
 document.getElementById("saveSettings2").addEventListener("click", () => {
   const privateKey = document.getElementById("privateKey").value;
 
-    fetch("/api/user/private_key", {
+  fetch("/api/user/private_key", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -102,7 +113,7 @@ document.getElementById("saveSettings2").addEventListener("click", () => {
     })
     .catch((err) => {
       console.error(err);
-  });
+    });
 });
 
 // Xử lý nút logout

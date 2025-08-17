@@ -1,7 +1,7 @@
 let controlMode = "null";
 let userId = null;
 const beepInterval = 30000;
-const pumpInterval = 30000;
+const pumpInterval = 10000;
 
 const [led, pump, beep] = ["control_led", "control_pump", "control_beep"];
 // Gọi khi load trang
@@ -32,7 +32,7 @@ function sendControlMode(mode, user_id) {
   const urlServer = `/api/update/control/mode?mode=${mode}&user_id=${encodeURIComponent(
     user_id
   )}`;
-  const urlESP32 = "http://192.168.1.7/api/control_mode";
+  const urlESP32 = "http://192.168.1.6/api/control_mode";
 
   fetch(urlServer, { method: "GET" })
     .then((res) => {
@@ -58,7 +58,7 @@ function sendControlMode(mode, user_id) {
 // Gửi điều khiển thiết bị + cập nhật server
 function sendDeviceControl(endpoint, state) {
   // Gửi ESP32
-  fetch(`http://192.168.1.7/api/${endpoint}`, {
+  fetch(`http://192.168.1.6/api/${endpoint}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
