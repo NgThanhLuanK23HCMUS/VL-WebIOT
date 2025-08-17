@@ -10,8 +10,10 @@ private_key_global = ""
 @upload_bp.route("/api/user/private_key",methods=["POST"])
 def receive_private_key():
     data = request.get_json(force=True)
-    
+    global private_key_global
     private_key_global = data.get("private_key")
+    return jsonify({"message": "Private key received"}), 200
+
 
 @upload_bp.route("/api/sensors/data", methods=["POST"])
 def receive_temperature_and_humidity():
@@ -121,7 +123,7 @@ def receive_mail_shock_data():
                 email = res[0]
                 if shock_data == "0" or shock_data == "false":
                     send_mail.send_urgent_mail_for_shock_data(email)
-        return jsonify({'status': 'success', 'message': 'Send successfully'}), 200
+        return jsonify({'status': 'success', 'message': 'Send mail successfully for shock data'}), 200
 
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
@@ -131,6 +133,7 @@ def receive_mail_shock_data():
 
 @upload_bp.route("/api/sms/sensors/data", methods=["POST"])
 def receive_sms_sensor_data():
+    global private_key_global
     try:
         data = request.get_json(force=True)
         temperature = float(data.get("temperature"))
@@ -140,13 +143,14 @@ def receive_sms_sensor_data():
         if private_key_global == "":
             return jsonify({'status': 'error', 'message': 'Private key not set'}), 400
         send_sms.send_urgent_sms_for_sensor_data(private_key_global, temperature, humidity, soil_moisture)
-        return jsonify({'status': 'success', 'message': 'Send sms successfully'}), 200
+        return jsonify({'status': 'success', 'message': 'Send sms successfully for sensor data'}), 200
 
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @upload_bp.route("/api/sms/shock/data", methods=["POST"])
 def receive_sms_shock_data():
+    global private_key_global
     try:
         data = request.get_json(force=True)
         shock_data = data.get("data")
@@ -155,7 +159,7 @@ def receive_sms_shock_data():
             return jsonify({'status': 'error', 'message': 'Private key not set'}), 400
 
         send_sms.send_urgent_sms_for_shock_data(private_key_global) 
-        return jsonify({'status': 'success', 'message': 'Send sms successfully'}), 200
+        return jsonify({'status': 'success', 'message': 'Send sms successfully for shock data'}), 200
 
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
@@ -230,7 +234,7 @@ def receive_information_of_device_user():
 
 
 @upload_bp.route("/api/update/control/mode", methods=["GET"])
-def receice_control_mode():
+def receive_control_mode():
     control_mode = request.args.get("mode")
     user_id = request.args.get("user_id")
     try:
@@ -273,6 +277,9 @@ def receive_control_device():
             cursor.close()
 
             return jsonify({"message": "Control mode updated successfully"}), 200
+        else:
+            cursor.close()
+            return jsonify({"error": "No device found for this user"}), 404
     except Exception as e:
         return jsonify({"error": f"Internal Server Error: {str(e)}"}), 500
 
