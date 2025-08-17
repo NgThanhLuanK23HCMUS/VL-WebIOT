@@ -31,15 +31,25 @@ void ReceiveThresholdConfigHandler::handle(WebServer* server) {
     String soilStr = server->arg("soilHumidity");
     String airStr = server->arg("airHumidity");
 
-    // Chuyển sang float hoặc số thực
-    float temperature = tempStr.toFloat();
-    float soilHumidity = soilStr.toFloat();
-    float airHumidity = airStr.toFloat();
 
-    // Cập nhật vào sensor hoặc xử lý tiếp
-    sensor->setTemperatureThreshold(temperature);
-    sensor->setSoilThreshold(soilHumidity);
-    sensor->setHumidityThreshold(airHumidity);
+    // Chuyển sang float hoặc số thực
+    if(tempStr != "null") {
+        float temperature = tempStr.toFloat();
+        sensor->setTemperatureThreshold(temperature);
+
+    }
+
+    if(soilStr != "null")
+    {
+        float soilHumidity = soilStr.toFloat();
+        sensor->setSoilThreshold(soilHumidity);
+    }
+
+    if(airStr != "null"){
+        float airHumidity = airStr.toFloat();
+        sensor->setHumidityThreshold(airHumidity);
+    }
+
 
 
     // Trả về thành công

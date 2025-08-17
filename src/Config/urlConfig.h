@@ -11,7 +11,8 @@ extern const char* infoDeviceUrl;
 extern const char* infoDeviceAndUserUrl;
 extern const char* dataUrl;
 extern const char* controlModeUrl;
-extern const char* shockDataUrl;
-extern const char* urgentDataUrl ;
-
+extern const char* mailShockDataUrl;
+extern const char* mailSensorDataUrl ;
+extern const char* smsSensorDataUrl;
+extern const char* smsShockDataUrl;
 #endif

@@ -14,7 +14,7 @@
 Preferences preferences;
 WebServer* server = new WebServer(80);
 unsigned long lastReadTime = 0;
-const unsigned long readInterval = 20000;  
+const unsigned long readInterval = 30000;  
 
 const unsigned long pumpInterval = 10000;
 extern unsigned long lastPumpTime ;
@@ -79,26 +79,35 @@ void runAutoModeApp(){
     tempAndHumSensor->readSensorData();
     soilSensor->readSensorData();
     lastReadTime = currentTime;
-    // if (sensor->getTemperature() > sensor->getTemperatureThreshold() || 
-    // sensor->getHumidity() > sensor->getHumidityThreshold() 
-    // // || sensor->getSoilMoisture() < sensor->getSoilThreshold()) {
-    // )
-    // {
-    //   sendSensorDataHandler->send(urgentDataUrl);
-    //   if(!relay->getIsOn()) {
-    //     relay->turnOn();
-    //     relay->setIsOn(true);
-    //     lastPumpTime = millis();  
-    //   }
 
-    // }
-
-    // sendSensorDataHandler->send(dataUrl);
+    Serial.println(sensor->getTemperature());
+    Serial.println(sensor->getTemperatureThreshold());
+    Serial.println(sensor->getHumidity());
+    Serial.println(sensor->getHumidityThreshold());
 
 
-    Serial.println(shockSensor->getIsShock());
+
+    if (sensor->getTemperature() > sensor->getTemperatureThreshold() || 
+    sensor->getHumidity() > sensor->getHumidityThreshold() 
+    // || sensor->getSoilMoisture() < sensor->getSoilThreshold()) {
+    )
+    {
+      sendSensorDataHandler->send(mailSensorDataUrl);
+      // sendSensorDataHandler->sendSmsSensorData(smsSensorDataUrl);
+      if(!relay->getIsOn()) {
+        relay->turnOn();
+        relay->setIsOn(true);
+        lastPumpTime = millis();  
+      }
+
+    }
+
+    sendSensorDataHandler->send(dataUrl);
+
+
     if(!shockSensor->getIsShock()) {
-      sendSensorDataHandler->sendShockData(shockDataUrl);
+      sendSensorDataHandler->sendMailShockData(mailShockDataUrl);
+      // sendSensorDataHandler->sendSmsShockData(smsShockDataUrl);
       shockSensor->setIsShock(1);
     }
       

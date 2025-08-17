@@ -43,7 +43,7 @@ void SendSensorDataHandler::send(const char *url)
     }
 }
 
-void SendSensorDataHandler::sendShockData(const char *url)
+void SendSensorDataHandler::sendMailShockData(const char *url)
 {
     if (WiFi.status() == WL_CONNECTED) {
         HTTPClient http;
@@ -71,6 +71,73 @@ void SendSensorDataHandler::sendShockData(const char *url)
         Serial.println("WiFi không kết nối!");
     }
 }
+
+void SendSensorDataHandler::sendSmsSensorData(const char *url)
+{
+     if (WiFi.status() == WL_CONNECTED) {
+        HTTPClient http;
+        http.setTimeout(10000); // 10 giây
+
+        http.begin(url);
+        http.addHeader("Content-Type", "application/json");
+
+        float humidity = sensor->getHumidity();
+        float temperature = sensor->getTemperature();
+        float soilMoisture = sensor->getSoilMoisture();
+
+        String json = "{";
+        json += "\"temperature\":" + String(temperature, 2) + ",";
+        json += "\"humidity\":" + String(humidity, 2) + ",";
+        json += "\"soil_moisture\":" + String(soilMoisture, 2) ;
+        json += "}";
+
+        Serial.println("JSON gửi đi:");
+        Serial.println(json);
+
+        int responseCode = http.POST(json);
+        Serial.printf("Server trả lời: %d\n", responseCode);
+
+        if (responseCode > 0) {
+            Serial.println("Response: " + http.getString());
+        } else {
+            Serial.printf("Lỗi gửi dữ liệu: %s\n", http.errorToString(responseCode).c_str());
+        }
+
+        http.end();
+    } else {
+        Serial.println("WiFi không kết nối!");
+    }
+}
+
+void SendSensorDataHandler::sendSmsShockData(const char *url)
+{
+    if (WiFi.status() == WL_CONNECTED) {
+        HTTPClient http;
+
+        http.begin(url);
+        http.addHeader("Content-Type", "application/json");
+
+        String json = "{";
+        json += "\"data\":\"" + String(shockSensor->getIsShock()) + "\"";
+        json += "}";
+        
+        Serial.println("JSON gửi đi:");
+        Serial.println(json);
+
+        int responseCode = http.POST(json);  
+        if (responseCode > 0) {
+            Serial.println("Response: " + http.getString());
+        } else {
+            Serial.printf("Lỗi gửi dữ liệu: %s\n", http.errorToString(responseCode).c_str());
+        }
+
+        http.end();
+    } else {
+        Serial.println("WiFi không kết nối!");
+    }
+
+}
+
 
 void SendSensorDataHandler::sendToThingSpeak()
 {

@@ -6,7 +6,7 @@
 class ShockSensor : public SensorManager {
 private:
     uint8_t pin;
-    int isShock = 0;
+    int isShock = 1;
 public:
     ShockSensor(uint8_t pin, Sensor* sensor)
         : SensorManager(sensor), pin(pin) {}

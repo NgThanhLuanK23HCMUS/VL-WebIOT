@@ -13,7 +13,9 @@ public:
     SendSensorDataHandler(Sensor* s, Device* d) : sensor(s), device(d) {}
 
     void send(const char* url) override ;
-    void sendShockData(const char* url);
+    void sendMailShockData(const char* url);
+    void sendSmsSensorData(const char* url);
+    void sendSmsShockData(const char* url);
     void sendToThingSpeak();
     void sendCurrentTimeToThingSpeak(int field);
 };
