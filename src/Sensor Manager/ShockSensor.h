@@ -6,18 +6,24 @@
 class ShockSensor : public SensorManager {
 private:
     uint8_t pin;
-    bool isShock = false;
+    int isShock = 0;
 public:
     ShockSensor(uint8_t pin, Sensor* sensor)
         : SensorManager(sensor), pin(pin) {}
 
     void begin() override;
-    bool getIsShock(){
+    int getIsShock(){
         return this->isShock;
     }
 
+    void setIsShock(int isShock) {
+        this->isShock = isShock;
+    }
 
     void readSensorData() override ;
+    int readShockSensor() {
+        return digitalRead(pin);
+    }
 };
 
 #endif

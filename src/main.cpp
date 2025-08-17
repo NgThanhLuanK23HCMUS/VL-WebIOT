@@ -63,6 +63,10 @@ void setup() {
 }
 
 void runAutoModeApp(){
+  int state = shockSensor->readShockSensor();
+  if(state == 0)
+      shockSensor->setIsShock(0);
+
   lightSensor->readSensorData();
   if(trafficLight->getIsOpen()) {
     trafficLight->turnOnfAll();
@@ -70,10 +74,7 @@ void runAutoModeApp(){
     trafficLight->turnOffAll();
   }
 
-
-
   unsigned long currentTime = millis();
-  
   if (currentTime - lastReadTime >= readInterval) {
     tempAndHumSensor->readSensorData();
     soilSensor->readSensorData();
@@ -92,16 +93,13 @@ void runAutoModeApp(){
 
     // }
 
-    
     // sendSensorDataHandler->send(dataUrl);
 
 
-
-
-    shockSensor->readSensorData();
     Serial.println(shockSensor->getIsShock());
-    if(!shockSensor->getIsShock()){
+    if(!shockSensor->getIsShock()) {
       sendSensorDataHandler->sendShockData(shockDataUrl);
+      shockSensor->setIsShock(1);
     }
       
   }
@@ -183,6 +181,8 @@ void runManualModeApp() {
 
 void loop() {
 
+  // shockSensor->readSensorData();  // Đọc dữ liệu cảm biến rung
+  // Serial.println(shockSensor->getIsShock());  // In ra trạng thái rung
   server->handleClient();  // Luôn xử lý request
   if(isFinishedConfigWifi){
     getCurrentState();  
