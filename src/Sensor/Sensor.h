@@ -19,7 +19,7 @@ public:
         humidity = 0.0;
         soilMoisture = 0.0;
         lightLevel = 0.0;
-        temperatureThreshold = 30.0; // Default threshold values
+        temperatureThreshold = 30.0; // Giá trị threshold mặc định
         humidityThreshold = 70.0;
         soilThreshold = 30.0;
     }

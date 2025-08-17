@@ -175,7 +175,7 @@ void SendSensorDataHandler::sendToThingSpeak()
         Serial.println("📬 Response body: " + resp);
         // resp là entry ID (>0) nếu thành công, 0 nếu lỗi (ví dụ quá nhanh)
     } else {
-        Serial.printf("❌ Lỗi gửi dữ liệu: %s\n", http.errorToString(responseCode).c_str());
+        Serial.printf("Lỗi gửi dữ liệu: %s\n", http.errorToString(responseCode).c_str());
     }
 
     http.end();
@@ -215,7 +215,7 @@ void SendSensorDataHandler::sendCurrentTimeToThingSpeak(int field)
     httpGet.begin(lastUrl);
     int codeGet = httpGet.GET();
     if (codeGet <= 0) {
-        Serial.printf("❌ Lỗi GET last.json: %s (code=%d)\n", httpGet.errorToString(codeGet).c_str(), codeGet);
+        Serial.printf("Lỗi GET last.json: %s (code=%d)\n", httpGet.errorToString(codeGet).c_str(), codeGet);
         httpGet.end();
         return;
     }
@@ -228,7 +228,7 @@ void SendSensorDataHandler::sendCurrentTimeToThingSpeak(int field)
     DynamicJsonDocument doc(2048);
     DeserializationError err = deserializeJson(doc, payloadGet);
     if (err) {
-        Serial.print("❌ Lỗi parse JSON last.json: ");
+        Serial.print("Lỗi parse JSON last.json: ");
         Serial.println(err.c_str());
         return;
     }
@@ -278,7 +278,7 @@ void SendSensorDataHandler::sendCurrentTimeToThingSpeak(int field)
     httpPost.begin(thingspeakUrl);
     httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
-    Serial.println("📦 Gửi tới ThingSpeak:");
+    Serial.println("Gửi tới ThingSpeak:");
     Serial.println(postData);
 
     int responseCode = httpPost.POST(postData);
@@ -286,9 +286,9 @@ void SendSensorDataHandler::sendCurrentTimeToThingSpeak(int field)
 
     if (responseCode > 0) {
         String resp = httpPost.getString();
-        Serial.println("📬 Response body: " + resp); // >0 là entry id, 0 là thất bại (rate-limit...)
+        Serial.println("Response body: " + resp); // >0 là entry id, 0 là thất bại (rate-limit...)
     } else {
-        Serial.printf("❌ Lỗi gửi dữ liệu: %s\n", httpPost.errorToString(responseCode).c_str());
+        Serial.printf("Lỗi gửi dữ liệu: %s\n", httpPost.errorToString(responseCode).c_str());
     }
 
     httpPost.end();

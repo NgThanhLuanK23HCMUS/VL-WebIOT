@@ -2,7 +2,7 @@
 #define SEND_SENSOR_DATA_HANDLER_H
 
 #include "SendHandler.h"
-#include "../Sensor/Sensor.h"  // đảm bảo bạn include đúng đường dẫn tới lớp Sensor
+#include "../Sensor/Sensor.h" 
 #include "../Config/globalSensorConfig.h"
 
 class SendSensorDataHandler : public SendHandler {

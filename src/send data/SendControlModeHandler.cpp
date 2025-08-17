@@ -37,19 +37,19 @@ void SendControlModeHandler::send(const char *url)
             }
             else
             {
-                Serial.println("❌ Lỗi phân tích JSON");
+                Serial.println("Lỗi phân tích JSON");
             }
         }
         else
         {
-            Serial.println("Error sending POST request: " + String(http.errorToString(httpResponseCode)));
+            Serial.println("Lỗi gửi POST request: " + String(http.errorToString(httpResponseCode)));
         }
 
         http.end(); // Đóng kết nối
     }
     else
     {
-        Serial.println("WiFi not connected");
+        Serial.println("WiFi chưa được kết nối");
     }
 }
 

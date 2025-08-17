@@ -10,7 +10,7 @@ void ReceivePumpConfigHandler::handle(WebServer *server)
         server->sendHeader("Access-Control-Allow-Origin", "*");
         server->sendHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
         server->sendHeader("Access-Control-Allow-Headers", "Content-Type");
-        server->send(204);  // No Content
+        server->send(204);  
         return;
     }
 

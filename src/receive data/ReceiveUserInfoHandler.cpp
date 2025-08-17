@@ -10,7 +10,7 @@ void ReceiveUserInfoHandler::handle(WebServer *server)
     server->sendHeader("Access-Control-Allow-Headers", "Content-Type");
 
     if (server->method() == HTTP_OPTIONS) {
-        server->send(204); // No Content
+        server->send(204); 
         return;
     }
 

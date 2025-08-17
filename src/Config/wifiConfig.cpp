@@ -35,7 +35,7 @@ bool connectToSavedWiFi() {
     return true;
   }
 
-  Serial.println("\n❌ Kết nối wifi đã được lưu thất bại");
+  Serial.println("\nKết nối wifi đã được lưu thất bại");
   return false;
 }
 

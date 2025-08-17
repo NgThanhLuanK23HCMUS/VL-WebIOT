@@ -10,7 +10,7 @@ void ReceiveBuzzerConfigHandler::handle(WebServer *server)
         server->sendHeader("Access-Control-Allow-Origin", "*");
         server->sendHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
         server->sendHeader("Access-Control-Allow-Headers", "Content-Type");
-        server->send(204);  // No Content
+        server->send(204);  
         return;
     }
 
@@ -28,7 +28,7 @@ void ReceiveBuzzerConfigHandler::handle(WebServer *server)
             }
             Serial.println(buzzer->getIsBeep());
 
-            server->sendHeader("Access-Control-Allow-Origin", "*");  // CORS cho POST
+            server->sendHeader("Access-Control-Allow-Origin", "*");  
             server->send(200, "text/plain", "OK");
         } else {
             server->send(400, "text/plain", "Missing 'state' param");

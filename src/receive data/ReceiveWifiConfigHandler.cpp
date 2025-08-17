@@ -11,8 +11,8 @@ void ReceiveWifiConfigHandler::handle(WebServer *server)
         this->finishConfigWifi = "false";
     }
 
-    Serial.println("🧠 Nhận được SSID: " + ssid);
-    Serial.println("🔑 Mật khẩu: " + password);
+    Serial.println("Nhận được SSID: " + ssid);
+    Serial.println("Mật khẩu: " + password);
 
     preferences.begin("wifi", false);
     preferences.putString("ssid", ssid);
