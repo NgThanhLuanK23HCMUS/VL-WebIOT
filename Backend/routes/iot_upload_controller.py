@@ -227,8 +227,6 @@ def receive_information_of_device_user():
     except Exception as e:
         return jsonify({"error": f"Internal Server Error: {str(e)}"}), 500
 
-
-
 @upload_bp.route("/api/update/control/mode", methods=["GET"])
 def receice_control_mode():
     control_mode = request.args.get("mode")
@@ -250,8 +248,6 @@ def receice_control_mode():
     except Exception as e:
         return jsonify({"error": f"Internal Server Error: {str(e)}"}), 500
     
-
-
 @upload_bp.route("/api/update/control/device", methods=["POST"])
 def receive_control_device():
     device = request.form.get("device")

@@ -50,7 +50,7 @@ function sendControlMode(mode, user_id) {
   })
     .then((res) => {
       if (!res.ok) console.error("ESP32 update failed");
-      else console.log("✅ ESP32 updated control mode");
+      else console.log("ESP32 updated control mode");
     })
     .catch((err) => console.error("ESP32 error:", err));
 }

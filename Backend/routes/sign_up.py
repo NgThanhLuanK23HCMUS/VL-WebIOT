@@ -23,7 +23,7 @@ def signup_manual():
     cursor.execute("INSERT INTO users (username, email, password, provider) VALUES (%s, %s, %s, %s)", (name, email, hashed_password, "manual"))
     db.mysql.connection.commit()
 
-    # get id to store session 
+    # lấy id để lưu session 
     cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
     user_id = cursor.fetchone()[0]
     session["user_id"] = user_id  
@@ -59,7 +59,7 @@ def signup_google():
     cursor.execute("INSERT INTO users(username, email, password, provider) VALUES (%s, %s, %s, %s)", (name, email, None, "google"))
     db.mysql.connection.commit()
 
-    # get id to store session 
+    # lấy id để lưu session 
     cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
     user_id = cursor.fetchone()[0]
     session["user_id"] = user_id  

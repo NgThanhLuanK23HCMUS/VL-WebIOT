@@ -12,7 +12,7 @@ const modal2 = document.getElementById("settingsModal2");
 const closeSettingsBtn = document.getElementById("closeSettings");
 const closeSettingsBtn2 = document.getElementById("closeSettings2");
 
-// Toggle popup menu khi nhấn bánh răng
+//Xuất hiện menu khi nhấn bánh răng
 gearIcon.addEventListener("click", () => {
   if (gearMenu.style.display === "block") {
     gearMenu.style.display = "none";
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const modal = document.getElementById("settingsModal");
     modal.style.display = "none";
 
-    // Gửi dữ liệu lên server (ví dụ dùng x-www-form-urlencoded)
+    // Gửi dữ liệu lên server 
     fetch("http://192.168.1.6/api/save/threshold", {
       method: "POST",
       headers: {
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Xử lý nút lưu trong modal 2
+// Xử lý nút lưu trong modal 2 (private_key)
 document.getElementById("saveSettings2").addEventListener("click", () => {
   const privateKey = document.getElementById("privateKey").value;
 
