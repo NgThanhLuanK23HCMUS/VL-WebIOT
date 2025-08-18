@@ -1,21 +1,6 @@
 #include "wifiConfig.h"
 // bool finishSetUpMode = false;  
 
-
-void resetPreferences() {
-  preferences.begin("wifi", false);
-  preferences.clear();
-  preferences.end();
-}
-
-bool checkSavedWifi(String &savedSSID, String& savedPASS){
-  preferences.begin("wifi", true);
-  savedSSID = preferences.getString("ssid", "");
-  savedPASS = preferences.getString("password", "");
-  preferences.end();
-  return savedSSID != "";
-}
-
 bool connectToSavedWiFi() {
   String savedSSID = "";
   String savedPASS = "";
@@ -39,6 +24,13 @@ bool connectToSavedWiFi() {
   return false;
 }
 
+void resetPreferences() {
+  preferences.begin("wifi", false);
+  preferences.clear();
+  preferences.end();
+}
+
+
 void setupAPMode() {
   WiFi.disconnect(true);       
   delay(1000);                 
@@ -48,3 +40,10 @@ void setupAPMode() {
   Serial.println("🔧 AP mode IP: " + IP.toString());
 }
 
+bool checkSavedWifi(String &savedSSID, String& savedPASS){
+  preferences.begin("wifi", true);
+  savedSSID = preferences.getString("ssid", "");
+  savedPASS = preferences.getString("password", "");
+  preferences.end();
+  return savedSSID != "";
+}

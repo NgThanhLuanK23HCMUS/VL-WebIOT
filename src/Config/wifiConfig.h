@@ -11,10 +11,11 @@
 extern WebServer* server;
 extern Preferences preferences;
 
-
 void resetPreferences();
-bool checkSavedWifi(String& savedSSID, String& savedPASS);
-bool connectToSavedWiFi();
+
 void setupAPMode( );
+bool connectToSavedWiFi();
+
+bool checkSavedWifi(String& savedSSID, String& savedPASS);
 
 #endif

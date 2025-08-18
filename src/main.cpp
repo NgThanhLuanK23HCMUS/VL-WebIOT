@@ -76,8 +76,9 @@ void runAutoModeApp(){
 
   unsigned long currentTime = millis();
   if (currentTime - lastReadTime >= readInterval) {
-    tempAndHumSensor->readSensorData();
     soilSensor->readSensorData();
+    //đọc nhiệt độ độ ẩm không khí
+    tempAndHumSensor->readSensorData();
     lastReadTime = currentTime;
 
 
@@ -89,12 +90,15 @@ void runAutoModeApp(){
     // || sensor->getSoilMoisture() < sensor->getSoilThreshold()) {
     )
     {
-      sendSensorDataHandler->send(mailSensorDataUrl);
+      //Gọi hàm để send sms
       sendSensorDataHandler->sendSmsSensorData(smsSensorDataUrl);
+      sendSensorDataHandler->send(mailSensorDataUrl);
+      
+      //check relay có đang được bật hay không để bật
       if(!relay->getIsOn()) {
-        relay->turnOn();
+        relay->turnOn(); //bật relay
         relay->setIsOn(true);
-        lastPumpTime = millis();  
+        lastPumpTime = millis(); //set thời gian bơm cuối 
       }
 
     }
@@ -102,29 +106,28 @@ void runAutoModeApp(){
     sendSensorDataHandler->send(dataUrl);
 
 
+    //Check cảm biến rung và gửi sms và mail
     if(!shockSensor->getIsShock()) {
-      sendSensorDataHandler->sendMailShockData(mailShockDataUrl);
       sendSensorDataHandler->sendSmsShockData(smsShockDataUrl);
+      sendSensorDataHandler->sendMailShockData(mailShockDataUrl);
       shockSensor->setIsShock(1);
     }
       
   }
 
-
-
-
-  if(relay->getIsOn() && (millis() - lastPumpTime >= pumpInterval)) {
+  //check relay có đang bật và thời gian bơm vượt quá thời gian tối đa được bơm để tắt
+  
+  if((millis() - lastPumpTime >= pumpInterval) && relay->getIsOn()) {
+    //tắt relay
     relay->turnOff();
     relay->setIsOn(false);
   }
-  
-  
-
 }
 
 void turnOffAllDevices() {
   trafficLight->setIsOpen(false);
   trafficLight->turnOffAll();
+  //tắt relay
   relay->setIsOn(false);
   relay->turnOff();
 
@@ -181,9 +184,6 @@ void runManualModeApp() {
 
 
 }
-
-
-
 
 void loop() {
 

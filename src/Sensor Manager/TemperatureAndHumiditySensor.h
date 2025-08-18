@@ -17,7 +17,7 @@ public:
     void begin() override {
         dht.begin();
     }
-
+    
     void readSensorData() override;
 };
 

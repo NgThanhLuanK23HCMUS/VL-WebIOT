@@ -27,9 +27,9 @@
 
 extern Sensor* sensor;
 extern Device* device;
-extern SensorManager* tempAndHumSensor;
 extern SensorManager* soilSensor;
 extern SensorManager* lightSensor;
+extern SensorManager* tempAndHumSensor;
 extern TrafficLight* trafficLight;
 extern Relay* relay;
 extern ShockSensor* shockSensor;

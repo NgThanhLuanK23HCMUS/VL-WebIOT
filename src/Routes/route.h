@@ -13,8 +13,8 @@ struct Route
     std::function<void()> handler;
 };
 
-void setupAPRoutes();
 void setupWiFiRoutes();
+void setupAPRoutes();
 
 
 #endif
