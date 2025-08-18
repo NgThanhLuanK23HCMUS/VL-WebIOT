@@ -131,39 +131,6 @@ def receive_mail_shock_data():
         if cursor:
             cursor.close()
 
-@upload_bp.route("/api/sms/sensors/data", methods=["POST"])
-def receive_sms_sensor_data():
-    global private_key_global
-    try:
-        data = request.get_json(force=True)
-        temperature = float(data.get("temperature"))
-        humidity = float(data.get("humidity"))
-        soil_moisture = float(data.get("soil_moisture"))
-
-        if private_key_global == "":
-            return jsonify({'status': 'error', 'message': 'Private key not set'}), 400
-        send_sms.send_urgent_sms_for_sensor_data(private_key_global, temperature, humidity, soil_moisture)
-        return jsonify({'status': 'success', 'message': 'Send sms successfully for sensor data'}), 200
-
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
-
-@upload_bp.route("/api/sms/shock/data", methods=["POST"])
-def receive_sms_shock_data():
-    global private_key_global
-    try:
-        data = request.get_json(force=True)
-        shock_data = data.get("data")
-
-        if private_key_global == "":
-            return jsonify({'status': 'error', 'message': 'Private key not set'}), 400
-
-        send_sms.send_urgent_sms_for_shock_data(private_key_global) 
-        return jsonify({'status': 'success', 'message': 'Send sms successfully for shock data'}), 200
-
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
-
 @upload_bp.route("/api/devices/register", methods=["POST"])
 def receive_information_of_device():
     data = request.get_json()  
@@ -195,7 +162,6 @@ def receive_information_of_device():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-
 @upload_bp.route("/api/user_devices", methods=["POST"])
 def receive_information_of_device_user():
     data = request.get_json()
@@ -279,3 +245,38 @@ def receive_control_device():
     except Exception as e:
         return jsonify({"error": f"Internal Server Error: {str(e)}"}), 500
 
+@upload_bp.route("/api/sms/sensors/data", methods=["POST"])
+def receive_sms_sensor_data():
+    global private_key_global
+    try:
+        #Lấy dữ liệu
+        data = request.get_json(force=True)
+        temperature = float(data.get("temperature"))
+        humidity = float(data.get("humidity"))
+        soil_moisture = float(data.get("soil_moisture"))
+
+        if private_key_global == "":
+            return jsonify({'status': 'error', 'message': 'Private key not set'}), 400
+        #Gọi hàm để truyền qua sms
+        send_sms.send_urgent_sms_for_sensor_data(private_key_global, temperature, humidity, soil_moisture)
+        return jsonify({'status': 'success', 'message': 'Send sms successfully for sensor data'}), 200
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@upload_bp.route("/api/sms/shock/data", methods=["POST"])
+def receive_sms_shock_data():
+    global private_key_global
+        
+    try:
+        data = request.get_json(force=True)
+        shock_data = data.get("data")
+        #Check private key
+        if private_key_global == "":
+            return jsonify({'status': 'error', 'message': 'Private key not set'}), 400
+        #Gọi hàm để truyền qua sms
+        send_sms.send_urgent_sms_for_shock_data(private_key_global) 
+        return jsonify({'status': 'success', 'message': 'Send sms successfully for shock data'}), 200
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
